@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Care Coordination Reports – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('reports')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Operations Telemetry</span>
+                    <h1 class="page-title">Coordination Reports &amp; Clinic Logs</h1>
+                </div>
+                <div class="header-actions">
+                    <a th:href="@{/reports/clinic-summary}" class="btn btn-primary btn-sm" target="_blank">
+                        <i class="fas fa-print"></i> Clinic Summary Report
+                    </a>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-calendar-alt text-primary"></i> Master Appointment Audit</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="table-responsive">
+                        <table class="app-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Patient</th>
+                                    <th>Attending Specialist</th>
+                                    <th>Session Type</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="apt : ${appointments}">
+                                    <td><strong th:text="${apt.appointmentDate}">2026-09-18</strong> <span th:text="${apt.appointmentTime}">10:00</span></td>
+                                    <td th:text="${apt.patient.fullName}">Patient</td>
+                                    <td>
+                                        <span th:if="${apt.doctor != null}" th:text="${'Dr. ' + apt.doctor.fullName}">Doctor</span>
+                                        <span th:if="${apt.nutritionist != null}" th:text="${'RD: ' + apt.nutritionist.fullName}">RD</span>
+                                    </td>
+                                    <td><span class="badge badge-info" th:text="${apt.type}">CHECKUP</span></td>
+                                    <td><span class="status-badge" th:classappend="${apt.status == 'CONFIRMED' ? 'confirmed' : 'pending'}" th:text="${apt.status}">CONFIRMED</span></td>
+                                </tr>
+                                <tr th:if="${appointments == null or appointments.isEmpty()}">
+                                    <td colspan="5" class="text-center text-muted">No appointments recorded.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

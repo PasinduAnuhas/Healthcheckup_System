@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Institutional Diet Plan Dossier – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { background: #f8fafc; color: #1e293b; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .report-page { max-width: 850px; margin: 30px auto; background: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .report-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 24px; }
+        .meal-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin-bottom: 16px; }
+        .macro-pill { display: inline-block; background: #e0f2fe; color: #0369a1; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; margin-right: 6px; }
+        @media print { .no-print { display: none !important; } .report-page { box-shadow: none; margin: 0; padding: 0; } }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body>
+    <div class="report-page">
+        <div class="no-print" style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px;">
+            <button onclick="window.print()" class="btn btn-primary btn-sm"><i class="fas fa-print"></i> Print Plan</button>
+            <button onclick="window.history.back()" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back</button>
+        </div>
+
+        <div class="report-header">
+            <div>
+                <h2 style="margin: 0; color: #0284c7;"><i class="fas fa-utensils"></i> Clinical Diet Prescription</h2>
+                <div style="font-size: 13px; color: #64748b; margin-top: 4px;">NutriHealth Certified Dietary Regimen</div>
+            </div>
+            <div style="text-align: right; font-size: 12px; color: #64748b;">
+                <div>Plan Code: <strong>DP-#<span th:text="${plan.id}">1</span></strong></div>
+                <div>Status: <span class="badge" style="background:#dcfce7; color:#15803d; font-weight:700;" th:text="${plan.status}">ACTIVE</span></div>
+                <div>Issued: <span th:text="${generatedDate}">2026-09-16</span></div>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 24px; background: #f0f9ff; padding: 16px 20px; border-radius: 8px; border-left: 4px solid #0284c7;">
+            <h3 style="margin: 0 0 6px 0; font-size: 18px;" th:text="${plan.title}">Anti-Inflammatory Keto</h3>
+            <p style="margin: 0; font-size: 14px; color: #334155;" th:text="${plan.objective}">Objective details</p>
+            <div style="margin-top: 10px; font-size: 13px;">
+                <strong>Calorie Target:</strong> <span th:text="${plan.dailyCalorieTarget}">2100</span> kcal/day &bull;
+                <strong>Patient:</strong> <span th:text="${plan.patient.fullName}">Patient</span> &bull;
+                <strong>Prescribing Dietitian:</strong> <span th:text="${plan.nutritionist != null ? plan.nutritionist.fullName : 'Staff Dietitian'}">Dietitian</span>
+            </div>
+        </div>
+
+        <h4 style="margin-top: 20px; margin-bottom: 12px; font-size: 15px; text-transform: uppercase; color: #475569;">Structured Meal Breakdown</h4>
+        <div th:each="meal : ${plan.meals}" class="meal-card">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                <strong style="font-size: 15px; color: #0f172a;" th:text="${meal.mealType + ': ' + meal.foodName}">Breakfast: Oatmeal &amp; Berries</strong>
+                <span style="font-weight: 700; color: #d97706;" th:text="${meal.calories} + ' kcal'">350 kcal</span>
+            </div>
+            <div style="font-size: 13px; color: #64748b; margin-bottom: 8px;">
+                Portion: <span th:text="${meal.portionSize}">1 bowl</span> &bull; Notes: <span th:text="${meal.instructions}">Fresh</span>
+            </div>
+            <div>
+                <span class="macro-pill">Protein: <span th:text="${meal.proteinG}">15</span>g</span>
+                <span class="macro-pill">Carbs: <span th:text="${meal.carbsG}">45</span>g</span>
+                <span class="macro-pill">Fat: <span th:text="${meal.fatsG}">8</span>g</span>
+            </div>
+        </div>
+        <div th:if="${plan.meals == null or plan.meals.isEmpty()}" style="font-size: 13px; color: #94a3b8; padding: 20px 0;">
+            Meals are tailored on an ongoing basis according to glycemic and food log reviews.
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 16px; border-radius: 8px;">
+                <h5 style="margin: 0 0 8px 0; color: #166534;"><i class="fas fa-check-circle"></i> Recommended Foods</h5>
+                <p style="margin: 0; font-size: 13px; color: #14532d;" th:text="${plan.recommendedFoods != null ? plan.recommendedFoods : 'Whole grains, leafy greens, grilled salmon, avocados'}"></p>
+            </div>
+            <div style="background: #fef2f2; border: 1px solid #fecaca; padding: 16px; border-radius: 8px;">
+                <h5 style="margin: 0 0 8px 0; color: #991b1b;"><i class="fas fa-ban"></i> Restricted Foods &amp; Allergens</h5>
+                <p style="margin: 0; font-size: 13px; color: #7f1d1d;" th:text="${plan.restrictedFoods != null ? plan.restrictedFoods : 'Refined sugar, trans fats, high sodium processed items'}"></p>
+            </div>
+        </div>
+
+        <div style="margin-top: 20px; background: #f8fafc; padding: 14px 18px; border-radius: 8px; font-size: 13px; color: #475569;">
+            <strong>Dietitian Clinical Notes:</strong>
+            <p style="margin: 6px 0 0 0;" th:text="${plan.nutritionistNotes != null ? plan.nutritionistNotes : 'Maintain optimal hydration (2.5L water daily) and record all deviations in daily food intake log.'}"></p>
+        </div>
+    </div>
+</body>
+</html>

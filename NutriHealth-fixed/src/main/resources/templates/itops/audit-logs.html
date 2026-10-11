@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security &amp; Audit Logs – IT Ops – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('audit-logs')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Security &amp; Compliance</span>
+                    <h1 class="page-title">Enterprise System Audit Trail</h1>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-history text-primary"></i> Real-Time Audit Records</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="table-responsive">
+                        <table class="app-table">
+                            <thead>
+                                <tr>
+                                    <th>Timestamp</th>
+                                    <th>Actor</th>
+                                    <th>Action</th>
+                                    <th>Audit Event Details</th>
+                                    <th>IP Address</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="log : ${logs}">
+                                    <td><small th:text="${log.timestamp}">2026-09-16 10:00:00</small></td>
+                                    <td><strong th:text="${log.userEmail}">user</strong></td>
+                                    <td><span class="badge badge-secondary" th:text="${log.action}">ACTION</span></td>
+                                    <td th:text="${log.description}">Details</td>
+                                    <td><small class="text-muted" th:text="${log.ipAddress != null ? log.ipAddress : '127.0.0.1'}">127.0.0.1</small></td>
+                                </tr>
+                                <tr th:if="${logs == null or logs.isEmpty()}">
+                                    <td colspan="5" class="text-center text-muted">No audit logs recorded.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

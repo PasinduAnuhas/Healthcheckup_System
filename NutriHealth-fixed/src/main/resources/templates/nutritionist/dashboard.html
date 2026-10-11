@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutritionist Dashboard – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Dietary Practice</span>
+                    <h1 class="page-title">Welcome, <span th:text="${nutritionist.fullName}">Lisa Vance, RD</span></h1>
+                    <span class="text-sm text-muted" th:text="${'Credentials: ' + profile.qualification + ' | Reg: ' + profile.certificationNumber}">Registered Dietitian</span>
+                </div>
+                <div class="header-actions">
+                    <a th:href="@{/nutritionist/diet-plans}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Design Diet Plan</a>
+                    <a th:href="@{/nutritionist/food-database}" class="btn btn-outline btn-sm"><i class="fas fa-database"></i> Food Database</a>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-green-light"><i class="fas fa-users"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Assigned Patients</span>
+                        <div class="kpi-value" th:text="${assignedPatients != null ? assignedPatients.size() : 0}">18</div>
+                        <span class="kpi-subtext">Active caseload</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-blue-light"><i class="fas fa-utensils"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Active Diet Plans</span>
+                        <div class="kpi-value" th:text="${activePlansCount}">12</div>
+                        <span class="metric-badge success">Enforced</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-amber-light"><i class="fas fa-lightbulb"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Meal Recommendations</span>
+                        <div class="kpi-value" th:text="${recommendations != null ? recommendations.size() : 0}">24</div>
+                        <span class="kpi-subtext">Published to patients</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-purple-light"><i class="fas fa-calendar-check"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Consultations</span>
+                        <div class="kpi-value" th:text="${appointments != null ? appointments.size() : 0}">5</div>
+                        <span class="kpi-subtext">Scheduled sessions</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- Active Diet Plans -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-clipboard-list text-primary"></i> Prescribed Diet Plans</h3>
+                        <a th:href="@{/nutritionist/diet-plans}" class="text-sm view-all-link">Manage Plans &rarr;</a>
+                    </div>
+                    <div class="panel-card-body">
+                        <div class="table-responsive" th:if="${dietPlans != null and !dietPlans.isEmpty()}">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Patient</th>
+                                        <th>Daily Target</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="dp : ${dietPlans}">
+                                        <td><strong th:text="${dp.title}">Plan Title</strong></td>
+                                        <td th:text="${dp.patient.fullName}">Patient</td>
+                                        <td><span class="calorie-num" th:text="${dp.dailyCalorieTarget} + ' kcal'">2100 kcal</span></td>
+                                        <td><span class="status-badge" th:classappend="${dp.status == 'ACTIVE' ? 'confirmed' : 'completed'}" th:text="${dp.status}">ACTIVE</span></td>
+                                        <td>
+                                            <a th:href="@{'/reports/diet-plan/' + ${dp.id}}" class="btn btn-outline btn-xs" target="_blank">
+                                                <i class="fas fa-print"></i> Report
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="empty-state text-center" th:if="${dietPlans == null or dietPlans.isEmpty()}">
+                            <p class="text-muted">No diet plans created yet.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Assigned Patients Roster -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-user-friends text-success"></i> Patient Caseload</h3>
+                        <a th:href="@{/nutritionist/patients}" class="text-sm view-all-link">All Patients &rarr;</a>
+                    </div>
+                    <div class="panel-card-body">
+                        <div class="table-responsive" th:if="${assignedPatients != null and !assignedPatients.isEmpty()}">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Height / Weight</th>
+                                        <th>BMI</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="p : ${assignedPatients}">
+                                        <td><strong th:text="${p.user.fullName}">Patient</strong></td>
+                                        <td><span th:text="${p.heightCm}">175</span> cm &bull; <span th:text="${p.currentWeightKg}">72.0</span> kg</td>
+                                        <td><strong th:text="${p.bmi != null ? p.bmi : '23.5'}">23.5</strong></td>
+                                        <td>
+                                            <a th:href="@{'/nutritionist/food-intake?patientId=' + ${p.user.id}}" class="btn btn-outline btn-xs">
+                                                <i class="fas fa-utensils"></i> Review Intake
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="empty-state text-center" th:if="${assignedPatients == null or assignedPatients.isEmpty()}">
+                            <p class="text-muted">No patients assigned to your care list.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>

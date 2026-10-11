@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('profile')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Clinical Profile</span>
+                    <h1 class="page-title">Personal Biometrics &amp; Health Profile</h1>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}">Profile updated!</span>
+            </div>
+
+            <div class="panel-card" style="max-width: 850px;">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-id-card text-primary"></i> Patient Medical &amp; Lifestyle Data</h3>
+                </div>
+                <div class="panel-card-body">
+                    <form th:action="@{/patient/profile}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-user"></i> Full Legal Name</label>
+                                <input type="text" name="fullName" class="form-control" th:value="${patient.fullName}" required>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-envelope"></i> Clinical Email (Permanent)</label>
+                                <input type="email" class="form-control" th:value="${patient.email}" readonly disabled>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-phone"></i> Contact Phone</label>
+                                <input type="tel" name="phone" class="form-control" th:value="${patient.phone}">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-venus-mars"></i> Gender</label>
+                                <select name="gender" class="form-control">
+                                    <option value="MALE" th:selected="${patient.gender == 'MALE'}">Male</option>
+                                    <option value="FEMALE" th:selected="${patient.gender == 'FEMALE'}">Female</option>
+                                    <option value="OTHER" th:selected="${patient.gender == 'OTHER'}">Other</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-tint text-danger"></i> Blood Group</label>
+                                <select name="bloodGroup" class="form-control">
+                                    <option value="A+" th:selected="${profile.bloodGroup == 'A+'}">A+</option>
+                                    <option value="A-" th:selected="${profile.bloodGroup == 'A-'}">A-</option>
+                                    <option value="B+" th:selected="${profile.bloodGroup == 'B+'}">B+</option>
+                                    <option value="B-" th:selected="${profile.bloodGroup == 'B-'}">B-</option>
+                                    <option value="AB+" th:selected="${profile.bloodGroup == 'AB+'}">AB+</option>
+                                    <option value="AB-" th:selected="${profile.bloodGroup == 'AB-'}">AB-</option>
+                                    <option value="O+" th:selected="${profile.bloodGroup == 'O+'}">O+</option>
+                                    <option value="O-" th:selected="${profile.bloodGroup == 'O-'}">O-</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-phone-square-alt text-danger"></i> Emergency Contact</label>
+                                <input type="text" name="emergencyContact" class="form-control" th:value="${profile.emergencyContact}" placeholder="Name &amp; Phone Number">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-map-marker-alt"></i> Residential Address</label>
+                            <input type="text" name="address" class="form-control" th:value="${patient.address}" placeholder="Street, City, State">
+                        </div>
+
+                        <h4 style="margin: 24px 0 12px 0; font-size: 15px; color: #0284c7; text-transform: uppercase;">Biometric Telemetry</h4>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Height (cm)</label>
+                                <input type="number" step="0.1" name="heightCm" class="form-control" th:value="${profile.heightCm != null ? profile.heightCm : 175.0}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Current Weight (kg)</label>
+                                <input type="number" step="0.1" name="currentWeightKg" class="form-control" th:value="${profile.currentWeightKg != null ? profile.currentWeightKg : 72.0}" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Target Weight (kg)</label>
+                                <input type="number" step="0.1" name="targetWeightKg" class="form-control" th:value="${profile.targetWeightKg != null ? profile.targetWeightKg : 68.0}" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label><i class="fas fa-running"></i> Physical Activity Level</label>
+                            <select name="activityLevel" class="form-control">
+                                <option value="SEDENTARY" th:selected="${profile.activityLevel == 'SEDENTARY'}">Sedentary (Desk work, little exercise)</option>
+                                <option value="LIGHT" th:selected="${profile.activityLevel == 'LIGHT'}">Light Activity (1-3 days/week exercise)</option>
+                                <option value="MODERATE" th:selected="${profile.activityLevel == 'MODERATE'}">Moderately Active (3-5 days/week training)</option>
+                                <option value="VERY_ACTIVE" th:selected="${profile.activityLevel == 'VERY_ACTIVE'}">Very Active (Heavy sports 6-7 days/week)</option>
+                            </select>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label><i class="fas fa-exclamation-circle text-warning"></i> Food Allergies</label>
+                                <input type="text" name="allergies" class="form-control" th:value="${profile.allergies}" placeholder="e.g. Peanuts, Shellfish, Lactose">
+                            </div>
+                            <div class="form-group">
+                                <label><i class="fas fa-notes-medical text-danger"></i> Medical Conditions</label>
+                                <input type="text" name="medicalConditions" class="form-control" th:value="${profile.medicalConditions}" placeholder="e.g. Hypertension, Pre-diabetes">
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 24px;">
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Profile Telemetry</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

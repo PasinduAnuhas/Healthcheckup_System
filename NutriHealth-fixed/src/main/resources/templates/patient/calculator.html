@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Calculator – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('calculator')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Clinical Computation</span>
+                    <h1 class="page-title">Dietary &amp; Metabolic Requirement Calculator</h1>
+                </div>
+            </div>
+
+            <!-- Calculation Output Hero Cards -->
+            <div class="kpi-grid" style="margin-bottom: 24px;">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-green-light"><i class="fas fa-weight"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Body Mass Index (BMI)</span>
+                        <div class="kpi-value" th:text="${bmi}">23.5</div>
+                        <span class="metric-badge success" th:text="${bmiCategory}">Normal Weight</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-amber-light"><i class="fas fa-fire"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Daily Calorie Expenditure (TDEE)</span>
+                        <div class="kpi-value"><span th:text="${calories}">2,150</span> <small>kcal/day</small></div>
+                        <span class="kpi-subtext">Mifflin-St Jeor Formula</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-blue-light"><i class="fas fa-tint"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Hydration Target</span>
+                        <div class="kpi-value"><span th:text="${waterLiters}">2.5</span> <small>Liters/day</small></div>
+                        <span class="kpi-subtext">Baseline cellular hydration</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- Inputs Form -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-sliders-h text-primary"></i> Biometric Parameters</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <form th:action="@{/patient/calculator}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Weight (kg)</label>
+                                    <input type="number" step="0.1" name="weight" class="form-control" th:value="${weight != null ? weight : (profile != null ? profile.currentWeightKg : 72.0)}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Height (cm)</label>
+                                    <input type="number" step="0.1" name="height" class="form-control" th:value="${height != null ? height : (profile != null ? profile.heightCm : 175.0)}" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Age (Years)</label>
+                                    <input type="number" name="age" class="form-control" th:value="${age != null ? age : 32}" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Biological Sex</label>
+                                    <select name="gender" class="form-control">
+                                        <option value="MALE" th:selected="${gender == 'MALE'}">Male</option>
+                                        <option value="FEMALE" th:selected="${gender == 'FEMALE'}">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Activity Multiplier</label>
+                                <select name="activityLevel" class="form-control">
+                                    <option value="SEDENTARY" th:selected="${activityLevel == 'SEDENTARY'}">Sedentary (Little or no exercise, BMR &times; 1.2)</option>
+                                    <option value="LIGHT" th:selected="${activityLevel == 'LIGHT'}">Lightly Active (Exercise 1-3 days/wk, BMR &times; 1.375)</option>
+                                    <option value="MODERATE" th:selected="${activityLevel == 'MODERATE'}">Moderately Active (Exercise 3-5 days/wk, BMR &times; 1.55)</option>
+                                    <option value="VERY_ACTIVE" th:selected="${activityLevel == 'VERY_ACTIVE'}">Very Active (Hard exercise 6-7 days/wk, BMR &times; 1.725)</option>
+                                </select>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">
+                                <i class="fas fa-calculator"></i> Compute Metabolic Targets
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Guidance & Macro Breakdown -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-chart-pie text-success"></i> Recommended Macronutrient Distribution</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                            Based on an estimated daily maintenance of <strong th:text="${calories} + ' kcal'">2,150 kcal</strong>, optimal clinical macronutrient partitioning is:
+                        </p>
+
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                                <span><strong>Protein (25%)</strong> &bull; Lean muscle synthesis</span>
+                                <span style="font-weight: 700; color: #0284c7;" th:text="${calories * 25 / 400 + ' g (' + calories * 25 / 100 + ' kcal)'}">134 g</span>
+                            </div>
+                            <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                                <div style="background: #0284c7; width: 25%; height: 100%;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 16px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                                <span><strong>Complex Carbohydrates (50%)</strong> &bull; Sustained glycogen</span>
+                                <span style="font-weight: 700; color: #16a34a;" th:text="${calories * 50 / 400 + ' g (' + calories * 50 / 100 + ' kcal)'}">268 g</span>
+                            </div>
+                            <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                                <div style="background: #16a34a; width: 50%; height: 100%;"></div>
+                            </div>
+                        </div>
+
+                        <div style="margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 4px;">
+                                <span><strong>Healthy Fats (25%)</strong> &bull; Endocrine regulation</span>
+                                <span style="font-weight: 700; color: #d97706;" th:text="${calories * 25 / 900 + ' g (' + calories * 25 / 100 + ' kcal)'}">60 g</span>
+                            </div>
+                            <div style="background: #e2e8f0; height: 8px; border-radius: 4px; overflow: hidden;">
+                                <div style="background: #d97706; width: 25%; height: 100%;"></div>
+                            </div>
+                        </div>
+
+                        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 14px; border-radius: 6px; font-size: 13px; color: #64748b;">
+                            <i class="fas fa-info-circle text-primary"></i> For therapeutic dietary adjustments (ketogenic, renal-safe, or diabetic diets), consult your attending clinical nutritionist.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

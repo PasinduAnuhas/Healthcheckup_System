@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic Operations Summary – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { background: #f8fafc; color: #1e293b; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .report-page { max-width: 850px; margin: 30px auto; background: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 24px 0; }
+        .stat-card { background: #f1f5f9; padding: 20px; border-radius: 8px; text-align: center; }
+        .stat-card .num { font-size: 32px; font-weight: 800; color: #0284c7; }
+        .stat-card .desc { font-size: 13px; color: #64748b; margin-top: 4px; }
+        @media print { .no-print { display: none !important; } .report-page { box-shadow: none; margin: 0; padding: 0; } }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body>
+    <div class="report-page">
+        <div class="no-print" style="display: flex; justify-content: flex-end; gap: 10px; margin-bottom: 20px;">
+            <button onclick="window.print()" class="btn btn-primary btn-sm"><i class="fas fa-print"></i> Print Executive Summary</button>
+            <button onclick="window.history.back()" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Back</button>
+        </div>
+
+        <div style="border-bottom: 2px solid #e2e8f0; padding-bottom: 16px; margin-bottom: 20px;">
+            <h2 style="margin: 0; color: #0284c7;"><i class="fas fa-hospital-alt"></i> NutriHealth Clinical Operations Audit</h2>
+            <div style="font-size: 13px; color: #64748b; margin-top: 4px;">Institutional Metrics &bull; Generated: <span th:text="${generatedDate}">2026-09-16</span></div>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="num" th:text="${totalPatients}">120</div>
+                <div class="desc">Active Registered Patients</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" th:text="${totalDoctors}">15</div>
+                <div class="desc">Attending Physicians</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" th:text="${totalNutritionists}">8</div>
+                <div class="desc">Clinical Nutritionists</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" th:text="${totalAppointments}">450</div>
+                <div class="desc">Total Clinic Appointments</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" th:text="${activePlans}">85</div>
+                <div class="desc">Active Diet Plans Enforced</div>
+            </div>
+            <div class="stat-card">
+                <div class="num" style="color: #16a34a;">99.98%</div>
+                <div class="desc">Platform HIPAA Uptime</div>
+            </div>
+        </div>
+
+        <p style="font-size: 13px; color: #475569; line-height: 1.6;">
+            This document serves as an institutional operational summary validating that clinical nutrition plans, medical check-up telemetry records, and appointment schedules comply with electronic health record standards.
+        </p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Care Coordination Messages – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('messages')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Communications</span>
+                    <h1 class="page-title">Care Coordinator Messaging Center</h1>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}">Message sent!</span>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- Compose Form -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-paper-plane text-primary"></i> Dispatch Patient Communication</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <form th:action="@{/coordinator/messages}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <div class="form-group">
+                                <label>Recipient Patient</label>
+                                <select name="recipientId" class="form-control" required>
+                                    <option value="">-- Choose Patient --</option>
+                                    <option th:each="p : ${patients}" th:value="${p.id}" th:text="${p.fullName + ' (' + p.email + ')'}">
+                                        Eleanor Vance
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Subject</label>
+                                <input type="text" name="subject" class="form-control" placeholder="e.g. Appointment reminder or lab test recall" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Message Content</label>
+                                <textarea name="content" class="form-control" rows="4" placeholder="Dear patient, this is a follow-up from your NutriHealth care coordination team..." required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Send Coordination Dispatch</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Inbox / Sent Logs -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-inbox text-success"></i> Dispatched &amp; Received</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <h4 style="font-size: 13px; text-transform: uppercase; color: #64748b; margin-bottom: 8px;">Incoming Patient Queries</h4>
+                        <div th:if="${inbox != null and !inbox.isEmpty()}">
+                            <div th:each="m : ${inbox}" style="padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <strong th:text="${m.sender != null ? m.sender.fullName : 'Patient'}">Sender</strong>
+                                    <small class="text-muted" th:text="${m.sentAt}">date</small>
+                                </div>
+                                <div style="font-weight: 600; font-size: 13px;" th:text="${m.subject}">Subject</div>
+                                <p style="font-size: 13px; color: #475569; margin: 2px 0 0 0;" th:text="${m.content}">Content</p>
+                            </div>
+                        </div>
+                        <div class="empty-state text-center" th:if="${inbox == null or inbox.isEmpty()}">
+                            <p class="text-muted" style="margin-bottom: 16px;">Inbox empty.</p>
+                        </div>
+
+                        <h4 style="font-size: 13px; text-transform: uppercase; color: #64748b; margin-top: 20px; margin-bottom: 8px;">Sent Dispatches</h4>
+                        <div th:if="${sent != null and !sent.isEmpty()}">
+                            <div th:each="sm : ${sent}" style="padding: 12px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 8px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>To: <strong th:text="${sm.recipient != null ? sm.recipient.fullName : 'Patient'}">Recipient</strong></span>
+                                    <small class="text-muted" th:text="${sm.sentAt}">date</small>
+                                </div>
+                                <div style="font-weight: 600; font-size: 13px;" th:text="${sm.subject}">Subject</div>
+                                <p style="font-size: 13px; color: #475569; margin: 2px 0 0 0;" th:text="${sm.content}">Content</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

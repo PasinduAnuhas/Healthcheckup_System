@@ -1,0 +1,108 @@
+/* =========================================================
+   NutriHealth - Responsive Stylesheet
+========================================================= */
+
+/* Tablets & Smaller Laptops */
+@media (max-width: 1024px) {
+  .dashboard-grid-3, .dashboard-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  
+  .stats-banner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .biometrics-bar {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 1rem;
+  }
+  
+  .biometric-item:nth-child(2) {
+    border-right: none;
+  }
+}
+
+/* Mobile & Small Tablets */
+@media (max-width: 768px) {
+  .dashboard-wrapper {
+    flex-direction: column;
+  }
+
+  .dashboard-sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .dashboard-sidebar.collapsed .sidebar-nav {
+    display: none;
+  }
+
+  .dashboard-topbar {
+    padding: 0 1rem;
+  }
+
+  .dashboard-content {
+    padding: 1rem;
+  }
+
+  .hero-title {
+    font-size: 2.25rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1.05rem;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .hero-cta .btn {
+    width: 100%;
+  }
+
+  .stats-banner {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .biometrics-bar {
+    grid-template-columns: 1fr;
+  }
+
+  .biometric-item {
+    border-right: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding-bottom: 0.75rem;
+  }
+
+  .biometric-item:last-child {
+    border-bottom: none;
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .auth-card {
+    padding: 1.75rem 1.25rem;
+  }
+
+  .demo-role-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Final responsive refinements */
+@media (max-width: 900px) {
+  .topbar-right .topbar-search { display:none !important; }
+  .app-main-content { overflow-x:hidden; }
+  .table-responsive { border-radius:14px; }
+}
+@media (max-width: 600px) {
+  .auth-card { padding:28px 20px; }
+  .demo-role-grid { grid-template-columns:1fr; }
+  .demo-pills-grid { grid-template-columns:1fr !important; }
+}

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Recommendations – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+    <style>
+        .rec-page{max-width:1180px;margin:0 auto}
+        .rec-hero{position:relative;overflow:hidden;border:1px solid #d8ece4;border-radius:24px;padding:34px 36px;margin-bottom:24px;background:linear-gradient(135deg,#f0fbf7 0%,#ffffff 58%,#eff8ff 100%);box-shadow:0 18px 45px rgba(28,83,68,.08)}
+        .rec-hero:before,.rec-hero:after{content:"";position:absolute;border-radius:50%;pointer-events:none}
+        .rec-hero:before{width:210px;height:210px;right:-70px;top:-95px;background:rgba(22,163,106,.09)}
+        .rec-hero:after{width:150px;height:150px;right:120px;bottom:-100px;background:rgba(38,132,216,.07)}
+        .rec-kicker{display:inline-flex;align-items:center;gap:8px;font-size:11px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase;color:#12875f;margin-bottom:10px}
+        .rec-hero h2{font-size:30px;line-height:1.15;margin:0 0 10px;color:#173e33;max-width:720px}
+        .rec-hero p{max-width:760px;margin:0;color:#657a73;line-height:1.7;font-size:14px}
+        .rec-stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px}
+        .rec-stat{background:rgba(255,255,255,.82);border:1px solid #dbeae5;border-radius:12px;padding:10px 14px;font-size:12px;color:#567168}
+        .rec-stat strong{color:#173e33;margin-left:4px}
+        .rec-section-heading{display:block;margin:28px 0 16px;padding:0;line-height:1.2;letter-spacing:normal}
+        .rec-section-heading h3{display:block;margin:0 0 6px;padding:0;font-size:20px;line-height:1.25;letter-spacing:-.02em;color:#183d33}
+        .rec-section-heading p{display:block;margin:0;padding:0;font-size:13px;line-height:1.5;letter-spacing:normal;color:#71837c}
+        .recommendation-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:18px}
+        .rec-card{position:relative;overflow:hidden;background:#fff;border:1px solid #dfeae6;border-radius:20px;box-shadow:0 12px 30px rgba(25,67,54,.07);transition:transform .18s ease,box-shadow .18s ease,border-color .18s ease}
+        .rec-card:hover{transform:translateY(-3px);border-color:#acd9c8;box-shadow:0 18px 38px rgba(25,67,54,.11)}
+        .rec-card-top{display:flex;justify-content:space-between;align-items:center;padding:17px 18px;border-bottom:1px solid #edf2f0;background:linear-gradient(180deg,#fbfefd,#fff)}
+        .meal-pill{display:inline-flex;align-items:center;gap:7px;border-radius:999px;padding:7px 11px;font-size:10px;font-weight:800;letter-spacing:.7px;text-transform:uppercase;background:#eff7ff;color:#2872ae;border:1px solid #cfe4f7}
+        .calorie-pill{font-size:12px;font-weight:800;color:#a56b08;background:#fff8e8;border:1px solid #f1dfb8;border-radius:999px;padding:7px 10px}
+        .rec-card-body{padding:20px}
+        .rec-title{font-size:19px;line-height:1.3;margin:0 0 8px;color:#0f78bd}
+        .rec-description{font-size:13px;line-height:1.7;color:#61756e;margin:0 0 16px}
+        .benefit-box{display:flex;gap:11px;align-items:flex-start;background:#f0faf5;border:1px solid #cce9da;border-radius:13px;padding:12px;margin-bottom:16px}
+        .benefit-icon{width:30px;height:30px;flex:0 0 30px;border-radius:9px;display:grid;place-items:center;background:#dcf5e8;color:#16885e}
+        .benefit-box strong{display:block;font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#19734f;margin-bottom:3px}
+        .benefit-box span{font-size:12px;line-height:1.5;color:#356a58}
+        .rec-meta{display:flex;justify-content:space-between;gap:10px;align-items:center;border-top:1px solid #edf2f0;padding-top:13px;font-size:11px;color:#7a8b85}
+        .friendly{color:#13865c;font-weight:700;white-space:nowrap}
+        .friendly i{margin-right:4px}
+        .empty-rec{border:1px dashed #cbded6;border-radius:20px;background:#fbfdfc;padding:55px 20px;text-align:center}
+        .empty-rec .icon{width:64px;height:64px;border-radius:20px;background:#eff9f5;color:#16a36a;display:grid;place-items:center;font-size:25px;margin:0 auto 14px}
+        .tips{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:24px}
+        .tip{background:#fff;border:1px solid #e1ebe7;border-radius:16px;padding:17px;box-shadow:0 8px 22px rgba(25,67,54,.045)}
+        .tip i{font-size:17px;color:#16a36a;margin-bottom:10px}.tip h4{font-size:14px;margin:0 0 5px}.tip p{font-size:12px;line-height:1.6;margin:0;color:#71837c}
+        @media(max-width:800px){.rec-hero{padding:26px 22px}.rec-hero h2{font-size:25px}.tips{grid-template-columns:1fr}.recommendation-grid{grid-template-columns:1fr}}
+    </style>
+</head>
+<body class="app-body">
+<header th:replace="~{fragments/header :: header}"></header>
+<div class="app-layout">
+    <aside th:replace="~{fragments/sidebar :: sidebar('meal-recommendations')}"></aside>
+
+    <main class="app-main-content">
+        <div class="rec-page">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Clinical Dietetics</span>
+                    <h1 class="page-title">Personalized Meal Recommendations</h1>
+                </div>
+            </div>
+
+            <section class="rec-hero">
+                <div class="rec-kicker"><i class="fas fa-sparkles"></i> Your nutrition inspiration</div>
+                <h2>Simple meals, thoughtful nutrition, better daily choices.</h2>
+                <p>Explore meal ideas prepared for your care plan. Each recommendation highlights an estimated energy value and a practical nutrition benefit so you can understand why the meal was suggested.</p>
+                <div class="rec-stats">
+                    <div class="rec-stat"><i class="fas fa-utensils"></i><strong th:text="${recommendations != null ? recommendations.size() : 0}">2</strong> recommendations</div>
+                    <div class="rec-stat"><i class="fas fa-leaf"></i><strong>Whole-food</strong> focused ideas</div>
+                    <div class="rec-stat"><i class="fas fa-heart-pulse"></i><strong>Care-plan</strong> aligned</div>
+                </div>
+            </section>
+
+            <div class="rec-section-heading">
+                <div>
+                    <h3>Recommended for you</h3>
+                    <p>Meal ideas from your clinical nutrition team.</p>
+                </div>
+            </div>
+
+            <div class="recommendation-grid" th:if="${recommendations != null and !recommendations.isEmpty()}">
+                <article th:each="rec : ${recommendations}" class="rec-card">
+                    <div class="rec-card-top">
+                        <span class="meal-pill">
+                            <i th:class="${rec.mealType == 'BREAKFAST' ? 'fas fa-sun' : (rec.mealType == 'LUNCH' ? 'fas fa-bowl-food' : (rec.mealType == 'DINNER' ? 'fas fa-moon' : 'fas fa-apple-whole'))}"></i>
+                            <span th:text="${rec.mealType}">DINNER</span>
+                        </span>
+                        <span class="calorie-pill"><i class="fas fa-fire"></i> <span th:text="${rec.calorieEstimate + ' kcal'}">450 kcal</span></span>
+                    </div>
+                    <div class="rec-card-body">
+                        <h3 class="rec-title" th:text="${rec.title}">Tofu Stir Fry with Bok Choy &amp; Shiitake Mushrooms</h3>
+                        <p class="rec-description" th:text="${rec.description}">Plant-based phyto-nutrient rich alternative for light digestion.</p>
+
+                        <div class="benefit-box">
+                            <div class="benefit-icon"><i class="fas fa-heart-pulse"></i></div>
+                            <div>
+                                <strong>Why this meal</strong>
+                                <span th:text="${rec.nutritionBenefits != null and !#strings.isEmpty(rec.nutritionBenefits) ? rec.nutritionBenefits : (rec.mealType == 'DINNER' ? 'A balanced, plant-forward option that adds variety to your evening meal.' : 'A practical nutrient-rich option to support variety in your daily food choices.')}">A nutrient-dense option with useful fibre and plant-based variety.</span>
+                            </div>
+                        </div>
+
+                        <div class="rec-meta">
+                            <span>Recommended by <strong th:text="${rec.nutritionist != null ? rec.nutritionist.fullName : 'Clinical Nutritionist'}">Clinical Nutritionist</strong></span>
+                            <span class="friendly" th:if="${rec.dietaryRestrictionFriendly}"><i class="fas fa-circle-check"></i>Care friendly</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <div class="empty-rec" th:if="${recommendations == null or recommendations.isEmpty()}">
+                <div class="icon"><i class="fas fa-lightbulb"></i></div>
+                <h2>No Recommendations Yet</h2>
+                <p>Your nutritionist will publish targeted meal ideas based on your progress and care plan.</p>
+            </div>
+
+            <section class="tips">
+                <div class="tip"><i class="fas fa-droplet"></i><h4>Stay hydrated</h4><p>Keep water nearby throughout the day and make hydration part of your meal routine.</p></div>
+                <div class="tip"><i class="fas fa-seedling"></i><h4>Build a balanced plate</h4><p>Combine vegetables, a protein source and a suitable carbohydrate for a more complete meal.</p></div>
+                <div class="tip"><i class="fas fa-clock"></i><h4>Keep a steady routine</h4><p>Use your logged intake to notice patterns and keep meals consistent with your nutrition plan.</p></div>
+            </section>
+        </div>
+    </main>
+</div>
+<footer th:replace="~{fragments/footer :: footer}"></footer>
+<script th:src="@{/js/main.js}"></script>
+</body>
+</html>

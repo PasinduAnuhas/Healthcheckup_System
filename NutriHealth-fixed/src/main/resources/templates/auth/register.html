@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Account – NutriHealth System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/auth-premium.css}">
+</head>
+<body class="auth-body">
+
+    <div class="auth-wrapper">
+        <div class="auth-card register-card">
+            <div class="auth-brand">
+                <a th:href="@{/}" class="brand-link">
+                    <span class="brand-badge"><i class="fas fa-heartbeat"></i></span>
+                    <span class="brand-text">Nutri<span class="brand-accent">Health</span></span>
+                </a>
+                <p class="auth-tagline">Create New Clinical Portal Account</p>
+            </div>
+
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span th:text="${errorMessage}">Error message</span>
+            </div>
+
+            <form th:action="@{/register}" method="post" class="auth-form" id="registerForm">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <div class="form-group">
+                    <label for="fullName"><i class="fas fa-user"></i> Full Legal Name</label>
+                    <input type="text" id="fullName" name="fullName" class="form-control" placeholder="e.g. Eleanor Vance" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email"><i class="fas fa-envelope"></i> Email Address</label>
+                        <input type="email" id="email" name="email" class="form-control" placeholder="name@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone"><i class="fas fa-phone"></i> Contact Phone</label>
+                        <input type="tel" id="phone" name="phone" class="form-control" placeholder="+1 (555) 000-0000" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="role"><i class="fas fa-id-badge"></i> Desired Account Role</label>
+                    <select id="role" name="role" class="form-control" required>
+                        <option value="ROLE_PATIENT" selected>Patient (Biometric Monitoring &amp; Diet Plan Tracking)</option>
+                        <option value="ROLE_DOCTOR">Doctor (Attending Physician &amp; Health Assessments)</option>
+                        <option value="ROLE_NUTRITIONIST">Nutritionist (Registered Dietitian &amp; Meal Plans)</option>
+                    </select>
+                    <small class="form-text text-muted">Administrative and IT roles are provisioned by clinic security officers.</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="password"><i class="fas fa-lock"></i> Password</label>
+                        <input type="password" id="password" name="password" class="form-control" placeholder="At least 6 characters" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword"><i class="fas fa-check-double"></i> Confirm Password</label>
+                        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Repeat password" required>
+                    </div>
+                </div>
+
+                <div class="form-group-checkbox">
+                    <label class="checkbox-label">
+                        <input type="checkbox" required id="terms">
+                        <span>I consent to health data telemetry storage in compliance with clinic privacy policies.</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg">
+                    <i class="fas fa-user-plus"></i> Complete Registration
+                </button>
+            </form>
+
+            <div class="auth-footer-text">
+                Already have an account? <a th:href="@{/login}">Sign In here</a>
+            </div>
+            <div class="auth-back-home">
+                <a th:href="@{/}"><i class="fas fa-arrow-left"></i> Return to Homepage</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', function (event) {
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const confirm = document.getElementById('confirmPassword');
+            const submit = this.querySelector('button[type="submit"]');
+
+            email.value = email.value.trim().toLowerCase();
+
+            if (password.value !== confirm.value) {
+                event.preventDefault();
+                confirm.setCustomValidity('Passwords do not match.');
+                confirm.reportValidity();
+                return;
+            }
+            confirm.setCustomValidity('');
+
+            // Prevent accidental double-submits, but do not introduce an artificial delay.
+            if (submit) {
+                submit.disabled = true;
+                submit.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Creating account...';
+            }
+        });
+
+        document.getElementById('confirmPassword').addEventListener('input', function () {
+            this.setCustomValidity('');
+        });
+    </script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

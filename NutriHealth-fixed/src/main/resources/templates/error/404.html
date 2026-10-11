@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Page Not Found – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="auth-body">
+    <div class="auth-wrapper">
+        <div class="auth-card text-center" style="max-width: 500px;">
+            <div style="font-size: 4rem; color: #0284c7; margin-bottom: 1rem;">
+                <i class="fas fa-compass"></i>
+            </div>
+            <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem; color: #1a202c;">404 &bull; Resource Not Found</h2>
+            <p style="color: #4a5568; line-height: 1.6; margin-bottom: 1.5rem;">
+                The clinical record, patient dossier, or page you requested could not be located in the NutriHealth registry.
+            </p>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <a th:href="@{/}" class="btn btn-outline"><i class="fas fa-home"></i> Home</a>
+                <a th:href="@{/login}" class="btn btn-primary"><i class="fas fa-user-circle"></i> Portal Sign-In</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

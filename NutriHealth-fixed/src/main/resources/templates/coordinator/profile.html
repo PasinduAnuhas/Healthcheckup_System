@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coordinator Profile – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('profile')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Staff Credentials</span>
+                    <h1 class="page-title">Care Coordinator Profile</h1>
+                </div>
+            </div>
+
+            <div class="panel-card" style="max-width: 700px;">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-id-badge text-primary"></i> Coordinator Details</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="form-group">
+                        <label>Staff Name</label>
+                        <input type="text" class="form-control" th:value="${coordinator.fullName}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Institutional Email</label>
+                        <input type="email" class="form-control" th:value="${coordinator.email}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Phone / Extension</label>
+                        <input type="text" class="form-control" th:value="${coordinator.phone != null ? coordinator.phone : '+1 (555) 019-3300'}" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Assigned Clinic Unit</label>
+                        <input type="text" class="form-control" value="NutriHealth Care Navigation &amp; Telehealth Coordination Wing" disabled>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

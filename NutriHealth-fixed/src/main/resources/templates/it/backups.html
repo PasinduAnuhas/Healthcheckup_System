@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Database Backup &amp; Disaster Recovery – IT Operations – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('backups')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Disaster Recovery &amp; Archival</span>
+                    <h1 class="page-title">Database Snapshots &amp; Point-in-Time Recovery</h1>
+                </div>
+                <div class="header-actions">
+                    <form th:action="@{/it/backups/trigger}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-camera"></i> Generate Instant Snapshot</button>
+                    </form>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}">Backup captured!</span>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-database text-primary"></i> Archive Vault Snapshots</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="table-responsive">
+                        <table class="app-table">
+                            <thead>
+                                <tr>
+                                    <th>Snapshot ID</th>
+                                    <th>Timestamp</th>
+                                    <th>Archive Size</th>
+                                    <th>Encryption</th>
+                                    <th>Integrity Check</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>SNAP-20260916-0400</code></td>
+                                    <td>2026-09-16 04:00:00 UTC</td>
+                                    <td>14.8 MB</td>
+                                    <td>AES-256-GCM</td>
+                                    <td><span class="badge badge-success">SHA-256 Verified</span></td>
+                                    <td><span class="status-badge confirmed">COMPLETED</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>SNAP-20260915-0400</code></td>
+                                    <td>2026-09-15 04:00:00 UTC</td>
+                                    <td>14.2 MB</td>
+                                    <td>AES-256-GCM</td>
+                                    <td><span class="badge badge-success">SHA-256 Verified</span></td>
+                                    <td><span class="status-badge confirmed">COMPLETED</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>SNAP-20260914-0400</code></td>
+                                    <td>2026-09-14 04:00:00 UTC</td>
+                                    <td>13.9 MB</td>
+                                    <td>AES-256-GCM</td>
+                                    <td><span class="badge badge-success">SHA-256 Verified</span></td>
+                                    <td><span class="status-badge confirmed">COMPLETED</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Database – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('food-database')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Clinical Dietetics</span>
+                    <h1 class="page-title">Institutional Food &amp; Nutrient Database</h1>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}">Food added!</span>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- Add Food Form -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-plus-circle text-primary"></i> Register Food Item</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <form th:action="@{/nutritionist/food-database}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Food Item Name</label>
+                                    <input type="text" name="name" class="form-control" placeholder="e.g. Rolled Oats" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Nutritional Category</label>
+                                    <select name="category" class="form-control" required>
+                                        <option value="GRAINS">Grains &amp; Cereals</option>
+                                        <option value="PROTEINS">Lean Proteins &amp; Meats</option>
+                                        <option value="DAIRY">Dairy &amp; Plant Milks</option>
+                                        <option value="VEGETABLES">Vegetables &amp; Greens</option>
+                                        <option value="FRUITS">Fruits &amp; Berries</option>
+                                        <option value="FATS">Healthy Fats &amp; Oils</option>
+                                        <option value="NUTS">Nuts &amp; Seeds</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Reference Serving</label>
+                                    <input type="text" name="servingSize" class="form-control" placeholder="100g / 1 cup" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Energy (kcal / 100g)</label>
+                                    <input type="number" name="caloriesPer100g" class="form-control" placeholder="389" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Protein (g)</label>
+                                    <input type="number" step="0.1" name="proteinG" class="form-control" placeholder="16.9" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Carbohydrates (g)</label>
+                                    <input type="number" step="0.1" name="carbsG" class="form-control" placeholder="66.3" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Fat (g)</label>
+                                    <input type="number" step="0.1" name="fatG" class="form-control" placeholder="6.9" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Dietary Fiber (g)</label>
+                                    <input type="number" step="0.1" name="fiberG" class="form-control" placeholder="10.6">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Clinical Notes / Glycemic Index Profile</label>
+                                <textarea name="description" class="form-control" rows="2" placeholder="Low GI, rich in beta-glucan soluble fiber..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-plus"></i> Save to Institution Database</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Food Registry Table -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-database text-success"></i> Food Items Library</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <div class="table-responsive">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Food</th>
+                                        <th>Category</th>
+                                        <th>Energy</th>
+                                        <th>Macros (P/C/F)</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="f : ${foods}">
+                                        <td>
+                                            <strong th:text="${f.name}">Oats</strong><br>
+                                            <small class="text-muted" th:text="${f.servingSize}">100g</small>
+                                        </td>
+                                        <td><span class="badge badge-secondary" th:text="${f.category}">GRAINS</span></td>
+                                        <td><span class="calorie-num" th:text="${f.caloriesPer100g} + ' kcal'">389 kcal</span></td>
+                                        <td><small th:text="${f.proteinG + 'p / ' + f.carbsG + 'c / ' + f.fatG + 'f'}">16.9p / 66.3c / 6.9f</small></td>
+                                        <td>
+                                            <details><summary class="btn btn-secondary btn-xs">Edit / Delete</summary>
+                                                <form th:action="@{'/nutritionist/food-database/' + ${f.id} + '/update'}" method="post" style="margin-top:8px; min-width:260px;">
+                                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                    <input name="name" class="form-control" th:value="${f.name}" required><input name="category" class="form-control" th:value="${f.category}" required><input name="servingSize" class="form-control" th:value="${f.servingSize}">
+                                                    <input type="number" name="caloriesPer100g" class="form-control" th:value="${f.caloriesPer100g}" required>
+                                                    <div class="form-row"><input type="number" step="0.01" name="proteinG" class="form-control" th:value="${f.proteinG}"><input type="number" step="0.01" name="carbsG" class="form-control" th:value="${f.carbsG}"></div>
+                                                    <div class="form-row"><input type="number" step="0.01" name="fatG" class="form-control" th:value="${f.fatG}"><input type="number" step="0.01" name="fiberG" class="form-control" th:value="${f.fiberG}"></div>
+                                                    <textarea name="description" class="form-control" rows="2" th:text="${f.description}"></textarea><input name="allergens" class="form-control" th:value="${f.allergens}">
+                                                    <label><input type="checkbox" name="healthy" value="true" th:checked="${f.healthy}"> Healthy</label><br><button type="submit" class="btn btn-primary btn-xs">Save Changes</button>
+                                                </form>
+                                                <form th:action="@{'/nutritionist/food-database/' + ${f.id} + '/delete'}" method="post" style="margin-top:6px;" onsubmit="return confirm('Delete this food item?');"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button type="submit" class="btn btn-danger btn-xs">Delete</button></form>
+                                            </details>
+                                        </td>
+                                    </tr>
+                                    <tr th:if="${foods == null or foods.isEmpty()}">
+                                        <td colspan="5" class="text-center text-muted">No foods in database.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

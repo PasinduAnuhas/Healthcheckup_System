@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutritionist Patients – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('patients')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Dietary Caseload</span>
+                    <h1 class="page-title">Assigned Patients for Nutritional Care</h1>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-users text-primary"></i> Patient Profiles</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="table-responsive">
+                        <table class="app-table">
+                            <thead>
+                                <tr>
+                                    <th>Patient</th>
+                                    <th>Blood Group</th>
+                                    <th>Height / Weight</th>
+                                    <th>Target Weight</th>
+                                    <th>Activity Level</th>
+                                    <th>Allergies / Conditions</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="p : ${patients}">
+                                    <td>
+                                        <strong th:text="${p.user.fullName}">Eleanor Vance</strong><br>
+                                        <small class="text-muted" th:text="${p.user.email}">email</small>
+                                    </td>
+                                    <td><span class="badge badge-secondary" th:text="${p.bloodGroup != null ? p.bloodGroup : 'O+'}">O+</span></td>
+                                    <td><span th:text="${p.heightCm}">175</span> cm &bull; <strong th:text="${p.currentWeightKg}">72.0</strong> kg</td>
+                                    <td><span th:text="${p.targetWeightKg != null ? p.targetWeightKg : '68.0'}">68.0</span> kg</td>
+                                    <td><span class="badge badge-info" th:text="${p.activityLevel != null ? p.activityLevel : 'MODERATE'}">MODERATE</span></td>
+                                    <td>
+                                        <small style="color: #dc2626;" th:text="${p.allergies != null and !p.allergies.isEmpty() ? 'Allergies: ' + p.allergies : 'No allergies'}">No allergies</small>
+                                    </td>
+                                    <td>
+                                        <div style="display: flex; gap: 6px;">
+                                            <a th:href="@{'/nutritionist/food-intake?patientId=' + ${p.user.id}}" class="btn btn-primary btn-xs">
+                                                <i class="fas fa-utensils"></i> Food Log
+                                            </a>
+                                            <a th:href="@{'/reports/patient/' + ${p.user.id} + '/summary'}" class="btn btn-outline btn-xs" target="_blank">
+                                                <i class="fas fa-file-pdf"></i> Dossier
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr th:if="${patients == null or patients.isEmpty()}">
+                                    <td colspan="7" class="text-center text-muted">No assigned patients found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

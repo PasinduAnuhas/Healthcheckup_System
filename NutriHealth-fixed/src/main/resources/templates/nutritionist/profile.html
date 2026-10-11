@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nutritionist Profile – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('profile')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Practitioner Credentials</span>
+                    <h1 class="page-title">Dietitian Clinical Profile</h1>
+                </div>
+            </div>
+
+            <div class="panel-card" style="max-width: 800px;">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-certificate text-primary"></i> Registered Dietitian Credentials</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Practitioner Name</label>
+                            <input type="text" class="form-control" th:value="${nutritionist.fullName}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Institutional Email</label>
+                            <input type="email" class="form-control" th:value="${nutritionist.email}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Qualifications &amp; Degrees</label>
+                            <input type="text" class="form-control" th:value="${profile.qualification}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>CDR Registration #</label>
+                            <input type="text" class="form-control" th:value="${profile.certificationNumber}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Clinical Specialization</label>
+                            <input type="text" class="form-control" th:value="${profile.specializationAreas != null ? profile.specializationAreas : 'Cardiometabolic &amp; Clinical Dietetics'}" disabled>
+                        </div>
+                        <div class="form-group">
+                            <label>Years of Clinical Practice</label>
+                            <input type="number" class="form-control" th:value="${profile.experienceYears != null ? profile.experienceYears : 8}" disabled>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Professional Bio</label>
+                        <textarea class="form-control" rows="3" disabled th:text="${profile.specializationAreas != null ? profile.specializationAreas : 'Registered Clinical Dietitian focused on evidence-based nutrition and personalized meal planning.'}"></textarea>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

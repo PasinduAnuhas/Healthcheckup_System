@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IT Operations Console – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">IT Infrastructure &amp; Security</span>
+                    <h1 class="page-title">IT Operations Command Console</h1>
+                </div>
+                <div class="header-actions">
+                    <a th:href="@{/it/system-health}" class="btn btn-outline btn-sm"><i class="fas fa-heartbeat"></i> Infrastructure Health</a>
+                    <a th:href="@{/it/users}" class="btn btn-primary btn-sm"><i class="fas fa-user-plus"></i> User Management</a>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-blue-light"><i class="fas fa-users-cog"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Total System Accounts</span>
+                        <div class="kpi-value" th:text="${totalUsers}">145</div>
+                        <span class="kpi-subtext"><span th:text="${activeUsers}">140</span> active</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-green-light"><i class="fas fa-server"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Service Health</span>
+                        <div class="kpi-value" th:text="${systemStatus.status}">HEALTHY</div>
+                        <span class="metric-badge success">Up &amp; Operational</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-purple-light"><i class="fas fa-memory"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">JVM Memory Usage</span>
+                        <div class="kpi-value" th:text="${systemStatus.memoryUsagePercent} + '%'">42%</div>
+                        <span class="kpi-subtext" th:text="${systemStatus.usedMemoryMb + ' / ' + systemStatus.totalMemoryMb + ' MB'}">Used</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-amber-light"><i class="fas fa-history"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Security Audit Logs</span>
+                        <div class="kpi-value" th:text="${auditLogsCount}">1024</div>
+                        <span class="kpi-subtext">Events logged</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- Role Breakdown -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-user-tag text-primary"></i> RBAC Role Distribution</h3>
+                        <a th:href="@{/it/users}" class="text-sm view-all-link">Manage Users &rarr;</a>
+                    </div>
+                    <div class="panel-card-body">
+                        <div class="table-responsive">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Role Clearance</th>
+                                        <th>Active Accounts</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="entry : ${roleBreakdown}">
+                                        <td><span class="badge badge-secondary" th:text="${entry.key}">ROLE</span></td>
+                                        <td><strong th:text="${entry.value}">0</strong> accounts</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Audit Logs -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-shield-alt text-success"></i> Real-time Telemetry &amp; Audits</h3>
+                        <a th:href="@{/it/audit-logs}" class="text-sm view-all-link">View Logs &rarr;</a>
+                    </div>
+                    <div class="panel-card-body">
+                        <div th:if="${recentLogs != null and !recentLogs.isEmpty()}">
+                            <div th:each="log : ${recentLogs}" style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 13px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <strong th:text="${log.userEmail}">user</strong>
+                                    <small class="text-muted" th:text="${log.timestamp}">time</small>
+                                </div>
+                                <span class="badge badge-info" style="font-size: 10px;" th:text="${log.action}">ACTION</span>
+                                <span style="color: #475569;" th:text="${log.description}">Details</span>
+                            </div>
+                        </div>
+                        <div class="empty-state text-center" th:if="${recentLogs == null or recentLogs.isEmpty()}">
+                            <p class="text-muted">No telemetry logs available.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic Admin Portal – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Clinical Administration</span>
+                    <h1 class="page-title">Executive Health System Dashboard</h1>
+                </div>
+                <div class="header-actions">
+                    <a th:href="@{/reports/clinic-summary}" class="btn btn-primary btn-sm" target="_blank"><i class="fas fa-print"></i> Clinic Summary Report</a>
+                    <a th:href="@{/admin/activities}" class="btn btn-outline btn-sm"><i class="fas fa-clipboard-list"></i> Activity Audit</a>
+                </div>
+            </div>
+
+            <!-- KPI Row -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-blue-light"><i class="fas fa-user-injured"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Registered Patients</span>
+                        <div class="kpi-value" th:text="${patientCount}">120</div>
+                        <span class="kpi-subtext">Active health accounts</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-green-light"><i class="fas fa-user-md"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Clinical Staff</span>
+                        <div class="kpi-value"><span th:text="${doctorCount}">12</span> Drs &bull; <span th:text="${nutritionistCount}">8</span> RDs</div>
+                        <span class="kpi-subtext">Credentialed providers</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-amber-light"><i class="fas fa-calendar-check"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Consultations Handled</span>
+                        <div class="kpi-value" th:text="${appointmentCount}">340</div>
+                        <span class="kpi-subtext">Cumulative sessions</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-purple-light"><i class="fas fa-utensils"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Active Diet Regimens</span>
+                        <div class="kpi-value" th:text="${activeDietPlans}">85</div>
+                        <span class="metric-badge success">Enforced</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- Recent Appointments -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-calendar-alt text-primary"></i> Recent Clinic Consultations</h3>
+                        <a th:href="@{/admin/appointments}" class="text-sm view-all-link">All Sessions &rarr;</a>
+                    </div>
+                    <div class="panel-card-body">
+                        <div class="table-responsive">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Patient</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="apt : ${recentAppointments}">
+                                        <td><strong th:text="${apt.appointmentDate}">2026-09-18</strong></td>
+                                        <td th:text="${apt.patient.fullName}">Patient</td>
+                                        <td><span class="badge badge-info" th:text="${apt.type}">CHECKUP</span></td>
+                                        <td><span class="status-badge" th:classappend="${apt.status == 'CONFIRMED' ? 'confirmed' : 'pending'}" th:text="${apt.status}">CONFIRMED</span></td>
+                                    </tr>
+                                    <tr th:if="${recentAppointments == null or recentAppointments.isEmpty()}">
+                                        <td colspan="4" class="text-center text-muted">No appointments found.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Audit Logs -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-shield-alt text-success"></i> Clinical Audit Stream</h3>
+                        <a th:href="@{/admin/activities}" class="text-sm view-all-link">Full Trail &rarr;</a>
+                    </div>
+                    <div class="panel-card-body">
+                        <div th:if="${recentLogs != null and !recentLogs.isEmpty()}">
+                            <div th:each="log : ${recentLogs}" style="padding: 10px; border-bottom: 1px solid #e2e8f0; font-size: 13px;">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <strong th:text="${log.userEmail}">user</strong>
+                                    <small class="text-muted" th:text="${log.timestamp}">date</small>
+                                </div>
+                                <span class="badge badge-secondary" style="font-size: 10px;" th:text="${log.action}">ACTION</span>
+                                <span style="color: #475569;" th:text="${log.description}">Details</span>
+                            </div>
+                        </div>
+                        <div class="empty-state text-center" th:if="${recentLogs == null or recentLogs.isEmpty()}">
+                            <p class="text-muted">No audit logs recorded.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>

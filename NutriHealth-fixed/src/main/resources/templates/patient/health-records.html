@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Records – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('health-records')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Medical Chart</span>
+                    <h1 class="page-title">Biometric Health Check-up History</h1>
+                </div>
+            </div>
+
+            <!-- Health Check-up Records Table -->
+            <div class="panel-card">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-stethoscope text-primary"></i> Physician Vital Recordings</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="table-responsive">
+                        <table class="app-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Attending Doctor</th>
+                                    <th>Weight (kg)</th>
+                                    <th>Blood Pressure</th>
+                                    <th>Glucose</th>
+                                    <th>Heart Rate</th>
+                                    <th>BMI Score</th>
+                                    <th>Status Summary</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="r : ${records}">
+                                    <td><strong th:text="${r.recordDate}">2026-09-10</strong></td>
+                                    <td><span th:text="${r.doctor != null ? r.doctor.fullName : 'Clinic Physician'}">Dr. Smith</span></td>
+                                    <td><span th:text="${r.weightKg}">72.0</span> kg</td>
+                                    <td>
+                                        <span class="badge" th:classappend="${r.systolicBp < 130 ? 'badge-success' : 'badge-warning'}"
+                                              th:text="${r.systolicBp + ' / ' + r.diastolicBp}">120 / 80</span>
+                                    </td>
+                                    <td><span th:text="${r.bloodSugarMgDl}">94.0</span> mg/dL</td>
+                                    <td><span th:text="${r.heartRateBpm}">72</span> bpm</td>
+                                    <td>
+                                        <strong th:text="${r.bmi}">23.5</strong>
+                                        <span class="metric-badge success" th:text="${r.bmiCategory}">Normal</span>
+                                    </td>
+                                    <td th:text="${r.notes != null ? r.notes : 'Optimal vitals'}">Optimal checkup</td>
+                                </tr>
+                                <tr th:if="${records == null or records.isEmpty()}">
+                                    <td colspan="8" class="text-center text-muted">No check-up records logged yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

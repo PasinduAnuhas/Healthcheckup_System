@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Reports &amp; Downloads – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('reports')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Clinical Documentation</span>
+                    <h1 class="page-title">Downloadable Medical Reports &amp; Exports</h1>
+                </div>
+            </div>
+
+            <div class="report-cards-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 20px;">
+                <!-- Comprehensive Health Dossier -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-file-pdf text-danger"></i> Complete Health Dossier</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">
+                            Includes full biometric profile, physician check-up logs, diagnoses, and active nutritional plan. Formatted for print or clinical referral.
+                        </p>
+                        <a th:href="@{/patient/health-dossier}" class="btn btn-primary btn-sm" target="_blank">
+                            <i class="fas fa-eye"></i> View &amp; Print Dossier
+                        </a>
+                    </div>
+                </div>
+
+                <!-- CSV Data Export -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-file-csv text-success"></i> Telemetry Check-up Data (CSV)</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <p style="font-size: 14px; color: #475569; margin-bottom: 16px;">
+                            Raw tabular export of all recorded weights, blood pressure readings, glucose levels, heart rate, and BMI scores for personal analytics.
+                        </p>
+                        <a th:href="@{'/reports/patient/' + ${patient.id} + '/export-csv'}" class="btn btn-outline btn-sm">
+                            <i class="fas fa-download"></i> Download CSV Spreadsheet
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

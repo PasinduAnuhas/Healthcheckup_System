@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body>
+    <!-- Reusable Alerts Fragment -->
+    <div th:fragment="alerts" class="alerts-container">
+        <!-- Success Alert -->
+        <div th:if="${success != null or param.success != null}" class="alert alert-success" role="alert">
+            <div class="alert-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <div class="alert-body">
+                <strong class="alert-title">Success!</strong>
+                <span class="alert-message" th:text="${success != null ? success : (param.success != null ? param.success : 'Operation completed successfully.')}">Operation successful.</span>
+            </div>
+            <button type="button" class="alert-close-btn" onclick="this.parentElement.remove();" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Error Alert -->
+        <div th:if="${error != null or param.error != null}" class="alert alert-danger" role="alert">
+            <div class="alert-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="alert-body">
+                <strong class="alert-title">Attention:</strong>
+                <span class="alert-message" th:text="${error != null ? error : (param.error != null ? param.error : 'An error occurred during request processing.')}">An error occurred.</span>
+            </div>
+            <button type="button" class="alert-close-btn" onclick="this.parentElement.remove();" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Warning Alert -->
+        <div th:if="${warning != null or param.warning != null}" class="alert alert-warning" role="alert">
+            <div class="alert-icon">
+                <i class="fas fa-exclamation-circle"></i>
+            </div>
+            <div class="alert-body">
+                <strong class="alert-title">Notice:</strong>
+                <span class="alert-message" th:text="${warning != null ? warning : param.warning}">Warning note.</span>
+            </div>
+            <button type="button" class="alert-close-btn" onclick="this.parentElement.remove();" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <!-- Information Alert -->
+        <div th:if="${info != null or param.info != null}" class="alert alert-info" role="alert">
+            <div class="alert-icon">
+                <i class="fas fa-info-circle"></i>
+            </div>
+            <div class="alert-body">
+                <strong class="alert-title">Information:</strong>
+                <span class="alert-message" th:text="${info != null ? info : param.info}">Information message.</span>
+            </div>
+            <button type="button" class="alert-close-btn" onclick="this.parentElement.remove();" aria-label="Close">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+</body>
+</html>

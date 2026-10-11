@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Care Coordinator Dashboard – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Care Coordination &amp; Navigation</span>
+                    <h1 class="page-title">Welcome, <span th:text="${coordinator.fullName}">Care Coordinator</span></h1>
+                </div>
+                <div class="header-actions">
+                    <a th:href="@{/coordinator/appointments}" class="btn btn-primary btn-sm"><i class="fas fa-calendar-plus"></i> Schedule Session</a>
+                    <a th:href="@{/coordinator/messages}" class="btn btn-outline btn-sm"><i class="fas fa-comment-dots"></i> Dispatch Message</a>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-amber-light"><i class="fas fa-clock"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Pending Requests</span>
+                        <div class="kpi-value" th:text="${pendingCount}">5</div>
+                        <span class="metric-badge warning">Needs confirmation</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-green-light"><i class="fas fa-calendar-check"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Confirmed Sessions</span>
+                        <div class="kpi-value" th:text="${confirmedCount}">18</div>
+                        <span class="kpi-subtext">On calendar</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-blue-light"><i class="fas fa-user-injured"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Managed Patients</span>
+                        <div class="kpi-value" th:text="${totalPatients}">42</div>
+                        <span class="kpi-subtext">In clinic registry</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-purple-light"><i class="fas fa-user-md"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Specialist Staff</span>
+                        <div class="kpi-value"><span th:text="${doctors.size()}">5</span> Drs &bull; <span th:text="${nutritionists.size()}">3</span> RDs</div>
+                        <span class="kpi-subtext">Active practitioners</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- Appointment Queue -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-tasks text-primary"></i> Patient Consultations Queue</h3>
+                        <a th:href="@{/coordinator/appointments}" class="text-sm view-all-link">Manage All &rarr;</a>
+                    </div>
+                    <div class="panel-card-body">
+                        <div class="table-responsive" th:if="${appointments != null and !appointments.isEmpty()}">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date/Time</th>
+                                        <th>Patient</th>
+                                        <th>Type</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="apt : ${appointments}">
+                                        <td>
+                                            <strong th:text="${apt.appointmentDate}">2026-09-18</strong><br>
+                                            <small class="text-muted" th:text="${apt.appointmentTime}">10:00 AM</small>
+                                        </td>
+                                        <td th:text="${apt.patient.fullName}">Patient</td>
+                                        <td><span class="badge badge-info" th:text="${apt.type}">CHECKUP</span></td>
+                                        <td>
+                                            <span class="status-badge" th:classappend="${apt.status == 'CONFIRMED' ? 'confirmed' : (apt.status == 'PENDING' ? 'pending' : 'completed')}" th:text="${apt.status}">PENDING</span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="empty-state text-center" th:if="${appointments == null or appointments.isEmpty()}">
+                            <p class="text-muted">No appointments in queue.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Patient Cohort -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-users text-success"></i> Patient Directory</h3>
+                        <a th:href="@{/coordinator/patients}" class="text-sm view-all-link">All Patients &rarr;</a>
+                    </div>
+                    <div class="panel-card-body">
+                        <div class="table-responsive" th:if="${patients != null and !patients.isEmpty()}">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Contact</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="p : ${patients}">
+                                        <td><strong th:text="${p.fullName}">Eleanor Vance</strong></td>
+                                        <td>
+                                            <span th:text="${p.email}">email</span><br>
+                                            <small class="text-muted" th:text="${p.phone}">phone</small>
+                                        </td>
+                                        <td><span class="badge badge-success">ACTIVE</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>

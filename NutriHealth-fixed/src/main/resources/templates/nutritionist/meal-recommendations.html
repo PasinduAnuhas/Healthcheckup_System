@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meal Recommendations – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('recommendations')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Targeted Dietary Guidance</span>
+                    <h1 class="page-title">Personalized Meal Recommendations</h1>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}">Recommendation published!</span>
+            </div>
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> <span th:text="${errorMessage}">Unable to process the recommendation.</span>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- Create Recommendation Form -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-lightbulb text-warning"></i> Propose Meal Recommendation</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <form th:action="@{/nutritionist/meal-recommendations}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Target Patient</label>
+                                    <select name="patientId" class="form-control" required>
+                                        <option value="">-- Choose Patient --</option>
+                                        <option th:each="p : ${patients}" th:value="${p.user.id}" th:text="${p.user.fullName}">Eleanor Vance</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Meal Category</label>
+                                    <select name="mealType" class="form-control" required>
+                                        <option value="BREAKFAST">Breakfast</option>
+                                        <option value="LUNCH">Lunch</option>
+                                        <option value="DINNER">Dinner</option>
+                                        <option value="SNACK">Snack</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Recipe / Meal Title</label>
+                                    <input type="text" name="title" class="form-control" placeholder="e.g. Avocado Spinach Green Smoothie" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Calorie Estimate (kcal)</label>
+                                    <input type="number" name="calorieEstimate" class="form-control" placeholder="320" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Preparation &amp; Ingredients Description</label>
+                                <textarea name="description" class="form-control" rows="3" placeholder="Combine 1 cup almond milk, 1 cup baby spinach, 1/2 avocado..." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Nutritional &amp; Clinical Benefits</label>
+                                <textarea name="nutritionBenefits" class="form-control" rows="2" placeholder="High potassium, bioavailable magnesium, healthy monounsaturated lipids..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-paper-plane"></i> Publish to Patient Portal</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Published Recommendations -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-list text-primary"></i> Active Recommendations</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <div th:if="${recommendations != null and !recommendations.isEmpty()}">
+                            <div th:each="rec : ${recommendations}" style="padding: 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; margin-bottom: 12px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <span class="badge badge-info" th:text="${rec.mealType}">LUNCH</span>
+                                    <span class="calorie-num" th:text="${rec.calorieEstimate} + ' kcal'">350 kcal</span>
+                                </div>
+                                <strong style="font-size: 15px; color: #0284c7;" th:text="${rec.title}">Meal Title</strong>
+                                <div style="font-size: 12px; color: #64748b; margin-bottom: 4px;">
+                                    For Patient: <strong th:text="${rec.patient.fullName}">Patient</strong>
+                                </div>
+                                <p style="font-size: 13px; color: #475569; margin: 0 0 6px 0;" th:text="${rec.description}">Description</p>
+                                <small th:if="${rec.nutritionBenefits != null}" style="color: #166534; display: block;">
+                                    <i class="fas fa-check"></i> <span th:text="${rec.nutritionBenefits}">Benefits</span>
+                                </small>
+                                <details style="margin-top:10px;">
+                                    <summary class="btn btn-outline btn-xs">Edit / Delete</summary>
+                                    <form th:action="@{/nutritionist/meal-recommendations/{id}/update(id=${rec.id})}" method="post" style="margin-top:10px;">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <div class="form-row">
+                                            <input name="mealType" class="form-control" th:value="${rec.mealType}" required>
+                                            <input name="title" class="form-control" th:value="${rec.title}" required>
+                                        </div>
+                                        <textarea name="description" class="form-control" rows="2" th:text="${rec.description}" required></textarea>
+                                        <div class="form-row">
+                                            <input type="number" name="calorieEstimate" class="form-control" th:value="${rec.calorieEstimate}" required>
+                                            <input name="nutritionBenefits" class="form-control" th:value="${rec.nutritionBenefits}">
+                                        </div>
+                                        <label style="display:block;margin:6px 0;"><input type="checkbox" name="dietaryRestrictionFriendly" value="true" th:checked="${rec.dietaryRestrictionFriendly}"> Dietary restriction friendly</label>
+                                        <button type="submit" class="btn btn-primary btn-xs">Save Changes</button>
+                                    </form>
+                                    <form th:action="@{/nutritionist/meal-recommendations/{id}/delete(id=${rec.id})}" method="post" style="margin-top:6px;" onsubmit="return confirm('Delete this recommendation?');">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button type="submit" class="btn btn-danger btn-xs">Delete</button>
+                                    </form>
+                                </details>
+                            </div>
+                        </div>
+                        <div class="empty-state text-center" th:if="${recommendations == null or recommendations.isEmpty()}">
+                            <p class="text-muted">No meal recommendations published yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

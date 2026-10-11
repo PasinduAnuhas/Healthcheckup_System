@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body>
+    <header th:fragment="header" class="topbar-navbar">
+        <div class="topbar-left">
+            <button id="sidebar-toggle-btn" class="menu-icon-btn" aria-label="Toggle navigation menu">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="brand-title">
+                <a th:href="@{/}" class="brand-link">
+                    <span class="brand-badge"><i class="fas fa-heartbeat"></i></span>
+                    <span class="brand-text">Nutri<span class="brand-accent">Health</span></span>
+                </a>
+            </div>
+            <div class="clinic-subtext">Clinical Nutrition &amp; Preventive Health System</div>
+        </div>
+
+        <div class="topbar-right">
+            <!-- Search bar -->
+            <div class="topbar-search">
+                <i class="fas fa-search search-icon"></i>
+                <input type="text" placeholder="Search records, appointments..." class="search-input" id="global-search-input">
+            </div>
+
+            <!-- Quick Status Pill -->
+            <div class="system-status-pill">
+                <span class="status-indicator-dot online"></span>
+                <span class="status-label">Clinical Core Online</span>
+            </div>
+
+            <!-- User Menu -->
+            <div class="user-menu-dropdown" sec:authorize="isAuthenticated()">
+                <div class="user-avatar-pill" id="user-avatar-toggle">
+                    <div class="avatar-circle">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-info-text">
+                        <span class="user-display-name" sec:authentication="name">User</span>
+                        <span class="user-role-tag" sec:authentication="principal.authorities[0].authority">ROLE</span>
+                    </div>
+                    <i class="fas fa-chevron-down dropdown-arrow"></i>
+                </div>
+                <div class="user-dropdown-menu" id="user-dropdown-content">
+                    <a th:href="@{/patient/profile}" sec:authorize="hasRole('PATIENT')" class="dropdown-item">
+                        <i class="fas fa-id-card"></i> My Profile
+                    </a>
+                    <a th:href="@{/doctor/profile}" sec:authorize="hasRole('DOCTOR')" class="dropdown-item">
+                        <i class="fas fa-user-md"></i> Clinical Credentials
+                    </a>
+                    <a th:href="@{/nutritionist/profile}" sec:authorize="hasRole('NUTRITIONIST')" class="dropdown-item">
+                        <i class="fas fa-carrot"></i> Nutritionist Credentials
+                    </a>
+                    <a th:href="@{/coordinator/profile}" sec:authorize="hasRole('PATIENT_CARE_COORDINATOR')" class="dropdown-item">
+                        <i class="fas fa-user-shield"></i> Coordinator Profile
+                    </a>
+                    <a th:href="@{/admin/profile}" sec:authorize="hasRole('CLINIC_ADMIN')" class="dropdown-item">
+                        <i class="fas fa-hospital-user"></i> Admin Profile
+                    </a>
+                    <a th:href="@{/it/profile}" sec:authorize="hasRole('IT_OPERATIONS_OFFICER')" class="dropdown-item">
+                        <i class="fas fa-terminal"></i> IT Operations Profile
+                    </a>
+                    <div class="dropdown-divider"></div>
+                    <form th:action="@{/logout}" method="post" style="margin: 0;">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <button type="submit" class="dropdown-item text-danger logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Sign Out
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Logged out CTA -->
+            <div class="auth-buttons-group" sec:authorize="!isAuthenticated()">
+                <a th:href="@{/login}" class="btn btn-outline-light btn-sm">Sign In</a>
+                <a th:href="@{/register}" class="btn btn-primary btn-sm">Register</a>
+            </div>
+        </div>
+    </header>
+</body>
+</html>

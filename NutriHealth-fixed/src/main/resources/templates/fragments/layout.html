@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:replace="${title}">NutriHealth &bull; Clinical Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <!-- Reusable Dashboard Layout Fragment -->
+    <div th:fragment="dashboard-layout(pageTitle, activeLink, pageContent)">
+        <!-- Header -->
+        <header th:replace="~{fragments/header :: header}"></header>
+
+        <!-- Main Content Area with Sidebar -->
+        <div class="app-layout">
+            <aside th:replace="~{fragments/sidebar :: sidebar(${activeLink})}"></aside>
+
+            <main class="app-main-content">
+                <!-- Alerts placeholder -->
+                <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+                <!-- Injected page content -->
+                <div th:replace="${pageContent}"></div>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+        <script th:src="@{/js/main.js}"></script>
+        <script th:src="@{/js/dashboard.js}"></script>
+    </div>
+</body>
+</html>

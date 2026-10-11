@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Progress – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('progress')}"></aside>
+
+        <main class="app-main-content progress-page">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Predictive Analytics</span>
+                    <h1 class="page-title">Biometric Trajectory &amp; Health Progress</h1>
+                </div>
+            </div>
+
+            <!-- Target Goal Progress Bar -->
+            <div class="panel-card" style="margin-bottom: 24px;">
+                <div class="panel-card-body">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 700; color: #0f172a;">Weight Target Progress</span>
+                        <span style="font-size: 14px; color: #0284c7; font-weight: 700;">
+                            Current: <span th:text="${profile.currentWeightKg}">72.0</span> kg &bull;
+                            Goal: <span th:text="${profile.targetWeightKg}">68.0</span> kg
+                        </span>
+                    </div>
+                    <div style="background: #e2e8f0; border-radius: 999px; height: 12px; overflow: hidden;">
+                        <div style="background: #0284c7; width: 75%; height: 100%; border-radius: 999px;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chart Row -->
+            <div class="dashboard-grid-2">
+                <!-- Weight & BMI Chart -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-chart-line text-primary"></i> Weight &amp; BMI Trends</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <div style="height: 280px; position: relative;">
+                            <canvas id="weightBmiChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Blood Pressure Chart -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-heartbeat text-danger"></i> Blood Pressure Telemetry (Systolic/Diastolic)</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <div style="height: 280px; position: relative;">
+                            <canvas id="bpChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Health Progress CRUD -->
+            <div class="panel-card" style="margin-top: 24px;">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-plus-circle text-primary"></i> Record Health Progress</h3>
+                </div>
+                <div class="panel-card-body">
+                    <form th:action="@{/patient/progress}" method="post" class="dashboard-grid-2">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <div><label>Date</label><input type="date" name="progressDate" class="form-control" required></div>
+                        <div><label>Weight (kg)</label><input type="number" name="weightKg" step="0.1" min="1" class="form-control" required></div>
+                        <div><label>Height (cm)</label><input type="number" name="heightCm" step="0.1" min="1" class="form-control"></div>
+                        <div><label>Systolic BP</label><input type="number" name="systolicBp" class="form-control"></div>
+                        <div><label>Diastolic BP</label><input type="number" name="diastolicBp" class="form-control"></div>
+                        <div><label>Blood Sugar (mg/dL)</label><input type="number" name="bloodSugarMgDl" step="0.1" class="form-control"></div>
+                        <div><label>Heart Rate (bpm)</label><input type="number" name="heartRateBpm" class="form-control"></div>
+                        <div style="grid-column:1/-1;"><label>Notes</label><textarea name="notes" class="form-control" rows="2"></textarea></div>
+                        <div style="grid-column:1/-1;"><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Progress</button></div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="panel-card" style="margin-top: 24px;">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-history text-secondary"></i> Manage Progress History</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="table-responsive">
+                        <table class="app-table">
+                            <thead><tr><th>Date</th><th>Weight</th><th>BMI</th><th>BP</th><th>Sugar</th><th>Heart Rate</th><th>Actions</th></tr></thead>
+                            <tbody>
+                            <tr th:each="p : ${progressEntries}">
+                                <td><input th:attr="form=${'update-progress-' + p.id}" type="date" name="progressDate" class="form-control" th:value="${p.progressDate}"></td>
+                                <td><input th:attr="form=${'update-progress-' + p.id}" type="number" step="0.1" name="weightKg" class="form-control" th:value="${p.weightKg}"></td>
+                                <td><strong th:text="${p.bmi}">23.5</strong></td>
+                                <td>
+                                    <input th:attr="form=${'update-progress-' + p.id}" type="number" name="systolicBp" style="width:75px" class="form-control" th:value="${p.systolicBp}">
+                                    /
+                                    <input th:attr="form=${'update-progress-' + p.id}" type="number" name="diastolicBp" style="width:75px" class="form-control" th:value="${p.diastolicBp}">
+                                </td>
+                                <td><input th:attr="form=${'update-progress-' + p.id}" type="number" step="0.1" name="bloodSugarMgDl" class="form-control" th:value="${p.bloodSugarMgDl}"></td>
+                                <td><input th:attr="form=${'update-progress-' + p.id}" type="number" name="heartRateBpm" class="form-control" th:value="${p.heartRateBpm}"></td>
+                                <td style="min-width:210px;">
+                                    <form th:id="${'update-progress-' + p.id}" th:action="@{'/patient/progress/' + ${p.id} + '/update'}" method="post">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <input type="hidden" name="heightCm" th:value="${p.heightCm}">
+                                        <input type="hidden" name="notes" th:value="${p.notes}">
+                                        <button type="submit" class="btn btn-primary btn-xs">Update</button>
+                                    </form>
+                                    <form th:action="@{'/patient/progress/' + ${p.id} + '/delete'}" method="post" style="display:inline" onsubmit="return confirm('Delete this progress entry?');">
+                                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <button type="submit" class="btn btn-danger btn-xs">Delete</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            <tr th:if="${progressEntries == null or progressEntries.isEmpty()}"><td colspan="7" class="text-center text-muted">No progress entries recorded yet.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Table of Vital Readings -->
+            <div class="panel-card" style="margin-top: 24px;">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-table text-secondary"></i> Logged Check-up Readings</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="table-responsive">
+                        <table class="app-table">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Weight (kg)</th>
+                                    <th>BMI Score</th>
+                                    <th>BP (mmHg)</th>
+                                    <th>Fasting Sugar</th>
+                                    <th>Heart Rate</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="r : ${records}">
+                                    <td th:text="${r.recordDate}">2026-09-10</td>
+                                    <td><span th:text="${r.weightKg}">72.0</span> kg</td>
+                                    <td><strong th:text="${r.bmi}">23.5</strong></td>
+                                    <td><span th:text="${r.systolicBp}">120</span> / <span th:text="${r.diastolicBp}">80</span></td>
+                                    <td><span th:text="${r.bloodSugarMgDl}">94.0</span> mg/dL</td>
+                                    <td><span th:text="${r.heartRateBpm}">72</span> bpm</td>
+                                </tr>
+                                <tr th:if="${records == null or records.isEmpty()}">
+                                    <td colspan="6" class="text-center text-muted">No vital readings logged yet.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        const weightLabels = /*[[${weightLabels}]]*/ [];
+        const weightData = /*[[${weightData}]]*/ [];
+        const bmiData = /*[[${bmiData}]]*/ [];
+
+        const bpLabels = /*[[${bpLabels}]]*/ [];
+        const systolicData = /*[[${systolicData}]]*/ [];
+        const diastolicData = /*[[${diastolicData}]]*/ [];
+
+        // Render Weight & BMI Chart
+        const ctxWeight = document.getElementById('weightBmiChart');
+        if (ctxWeight) {
+            new Chart(ctxWeight, {
+                type: 'line',
+                data: {
+                    labels: weightLabels.length ? weightLabels : ['Point 1', 'Point 2', 'Point 3'],
+                    datasets: [
+                        {
+                            label: 'Weight (kg)',
+                            data: weightData,
+                            borderColor: '#0284c7',
+                            backgroundColor: 'rgba(2, 132, 199, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: 'BMI',
+                            data: bmiData,
+                            borderColor: '#16a34a',
+                            borderDash: [5, 5],
+                            tension: 0.3,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: { type: 'linear', position: 'left', title: { display: true, text: 'kg' } },
+                        y1: { type: 'linear', position: 'right', grid: { drawOnChartArea: false }, title: { display: true, text: 'BMI' } }
+                    }
+                }
+            });
+        }
+
+        // Render BP Chart
+        const ctxBp = document.getElementById('bpChart');
+        if (ctxBp) {
+            new Chart(ctxBp, {
+                type: 'line',
+                data: {
+                    labels: bpLabels.length ? bpLabels : ['Point 1', 'Point 2', 'Point 3'],
+                    datasets: [
+                        {
+                            label: 'Systolic (mmHg)',
+                            data: systolicData,
+                            borderColor: '#dc2626',
+                            backgroundColor: 'rgba(220, 38, 38, 0.1)',
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Diastolic (mmHg)',
+                            data: diastolicData,
+                            borderColor: '#ea580c',
+                            tension: 0.3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+        /*]]>*/
+    </script>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

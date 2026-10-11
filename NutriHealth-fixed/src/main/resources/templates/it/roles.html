@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Role Permissions &amp; Access Matrix – IT Operations – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('roles')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Security &amp; Authorization</span>
+                    <h1 class="page-title">Role-Based Access Control (RBAC) Matrix</h1>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-shield-alt text-primary"></i> System Clearance Roles &amp; Capabilities</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="table-responsive">
+                        <table class="app-table">
+                            <thead>
+                                <tr>
+                                    <th>Role Identifier</th>
+                                    <th>Display Designation</th>
+                                    <th>Access Scope</th>
+                                    <th>Clearance Tier</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><code>ROLE_PATIENT</code></td>
+                                    <td><strong>Patient (End User)</strong></td>
+                                    <td>Personal health records, meal logging, progress metrics, appointments, messages</td>
+                                    <td><span class="badge badge-info">Level 1 - Client</span></td>
+                                    <td><span class="status-badge confirmed">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>ROLE_DOCTOR</code></td>
+                                    <td><strong>Attending Doctor</strong></td>
+                                    <td>Patient medical dossiers, clinical assessments, consultation appointments, vitals</td>
+                                    <td><span class="badge badge-primary">Level 2 - Clinical Staff</span></td>
+                                    <td><span class="status-badge confirmed">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>ROLE_NUTRITIONIST</code></td>
+                                    <td><strong>Clinical Nutritionist</strong></td>
+                                    <td>Diet plan authoring, meal recommendations, nutrient databases, intake auditing</td>
+                                    <td><span class="badge badge-primary">Level 2 - Clinical Staff</span></td>
+                                    <td><span class="status-badge confirmed">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>ROLE_PATIENT_CARE_COORDINATOR</code></td>
+                                    <td><strong>Patient Care Coordinator</strong></td>
+                                    <td>Clinic scheduling, patient directory triage, follow-up tracking, dispatch communication</td>
+                                    <td><span class="badge badge-warning">Level 3 - Operations</span></td>
+                                    <td><span class="status-badge confirmed">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>ROLE_CLINIC_ADMIN</code></td>
+                                    <td><strong>Clinic Administrator</strong></td>
+                                    <td>Clinic governance, staff directory, master appointments, enterprise activity tracking</td>
+                                    <td><span class="badge badge-danger">Level 4 - Management</span></td>
+                                    <td><span class="status-badge confirmed">ACTIVE</span></td>
+                                </tr>
+                                <tr>
+                                    <td><code>ROLE_IT_OPERATIONS_OFFICER</code></td>
+                                    <td><strong>IT Operations Officer</strong></td>
+                                    <td>System configuration, user account provisioning, security audits, database snapshots</td>
+                                    <td><span class="badge badge-secondary">Level 5 - Infrastructure</span></td>
+                                    <td><span class="status-badge confirmed">ACTIVE</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

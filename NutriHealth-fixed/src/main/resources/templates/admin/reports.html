@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinic Operational Reports – Admin – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('reports')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Executive Reporting</span>
+                    <h1 class="page-title">Clinic Performance &amp; Operations Reports</h1>
+                </div>
+                <div class="header-actions">
+                    <a th:href="@{/reports/clinic-summary}" class="btn btn-primary btn-sm" target="_blank">
+                        <i class="fas fa-print"></i> Generate Full Clinic Dossier
+                    </a>
+                </div>
+            </div>
+
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-blue-light"><i class="fas fa-users"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Active Cohort</span>
+                        <div class="kpi-value" th:text="${patientCount}">120</div>
+                        <span class="kpi-subtext">Patients</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-green-light"><i class="fas fa-user-md"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Staff Doctors</span>
+                        <div class="kpi-value" th:text="${doctorCount}">12</div>
+                        <span class="kpi-subtext">Physicians</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-amber-light"><i class="fas fa-apple-alt"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Staff Nutritionists</span>
+                        <div class="kpi-value" th:text="${nutritionistCount}">8</div>
+                        <span class="kpi-subtext">Dietitians</span>
+                    </div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-purple-light"><i class="fas fa-calendar-check"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Appointments</span>
+                        <div class="kpi-value" th:text="${totalAppointments}">340</div>
+                        <span class="kpi-subtext">Total records</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-card" style="margin-top: 24px;">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-plus-circle text-success"></i> Create Saved Clinic Report</h3>
+                </div>
+                <div class="panel-card-body">
+                    <form th:action="@{/admin/reports}" method="post" class="dashboard-grid-2">
+                        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                        <div><label>Report Title</label><input type="text" name="title" class="form-control" required placeholder="Monthly Clinic Activity"></div>
+                        <div><label>Report Type</label><select name="reportType" class="form-control" required>
+                            <option value="PATIENT_VISITS">Patient Visits</option>
+                            <option value="CLINIC_ACTIVITY">Clinic Activity</option>
+                            <option value="HEALTH_PROGRESS">Health Progress</option>
+                            <option value="APPOINTMENTS">Appointments</option>
+                            <option value="DIET_PLANS">Diet Plans</option>
+                        </select></div>
+                        <div style="grid-column:1/-1;"><label>Description</label><textarea name="description" class="form-control" rows="2"></textarea></div>
+                        <div style="grid-column:1/-1;"><button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Save Report</button></div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="panel-card" style="margin-top: 24px;">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-file-invoice text-primary"></i> Available Clinic Reports</h3>
+                </div>
+                <div class="panel-card-body">
+                    <p style="font-size: 14px; color: #475569; margin-bottom: 20px;">
+                        The NutriHealth Clinical Operations Summary compiles vital metrics, caseload distributions, practitioner assignments, and check-up statistics into an executive-level report formatted for compliance, stakeholder presentations, and clinical oversight.
+                    </p>
+                    <div th:if="${reports != null and !reports.isEmpty()}" style="margin-top:24px;">
+                        <h4>Saved Report Definitions</h4>
+                        <div th:each="report : ${reports}" style="border:1px solid #e2e8f0;border-radius:10px;padding:14px;margin-top:10px;">
+                            <form th:action="@{'/admin/reports/' + ${report.id} + '/update'}" method="post">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <div class="dashboard-grid-2">
+                                    <input name="title" class="form-control" th:value="${report.title}" required>
+                                    <select name="reportType" class="form-control">
+                                        <option value="PATIENT_VISITS" th:selected="${report.reportType == 'PATIENT_VISITS'}">Patient Visits</option>
+                                        <option value="CLINIC_ACTIVITY" th:selected="${report.reportType == 'CLINIC_ACTIVITY'}">Clinic Activity</option>
+                                        <option value="HEALTH_PROGRESS" th:selected="${report.reportType == 'HEALTH_PROGRESS'}">Health Progress</option>
+                                        <option value="APPOINTMENTS" th:selected="${report.reportType == 'APPOINTMENTS'}">Appointments</option>
+                                        <option value="DIET_PLANS" th:selected="${report.reportType == 'DIET_PLANS'}">Diet Plans</option>
+                                    </select>
+                                    <textarea name="description" class="form-control" rows="2" style="grid-column:1/-1;" th:text="${report.description}"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-primary btn-xs" style="margin-top:8px;">Update</button>
+                            </form>
+                            <form th:action="@{'/admin/reports/' + ${report.id} + '/delete'}" method="post" style="display:inline;" onsubmit="return confirm('Delete this saved report?');">
+                                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                <button type="submit" class="btn btn-danger btn-xs">Delete</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <a th:href="@{/reports/clinic-summary}" class="btn btn-primary" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> View Comprehensive Clinic Dossier
+                    </a>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>System Logs &amp; Console – IT Operations – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('system-logs')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Runtime Telemetry</span>
+                    <h1 class="page-title">Console &amp; Application System Logs</h1>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-terminal text-primary"></i> Application Standard Output Log Stream</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div style="background: #0f172a; color: #38bdf8; font-family: monospace; padding: 20px; border-radius: 8px; font-size: 13px; line-height: 1.6; max-height: 480px; overflow-y: auto;">
+                        <p style="color: #94a3b8;">[2026-09-16 08:00:01] [INFO] org.springframework.boot.Startup - NutriHealth Web Application context initialized successfully.</p>
+                        <p style="color: #94a3b8;">[2026-09-16 08:00:02] [INFO] org.hibernate.dialect.Dialect - HHH000400: Using dialect: org.hibernate.dialect.H2Dialect</p>
+                        <p style="color: #4ade80;">[2026-09-16 08:00:03] [INFO] com.nutrihealth.config.DataInitializer - >>> Initializing NutriHealth demo accounts and sample clinical dataset...</p>
+                        <p style="color: #38bdf8;">[2026-09-16 08:00:04] [INFO] com.nutrihealth.config.SecurityConfig - SecurityFilterChain configured: BCryptPasswordEncoder active with HTTP Strict Transport.</p>
+                        <p style="color: #94a3b8;">[2026-09-16 08:01:15] [INFO] org.apache.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-3000"]</p>
+                        <p style="color: #4ade80;">[2026-09-16 08:01:16] [INFO] com.nutrihealth.NutriHealthApplication - Started NutriHealthApplication in 3.42 seconds (JVM running for 4.102)</p>
+                        <p style="color: #facc15;">[2026-09-16 08:05:00] [INFO] com.nutrihealth.service.AuditService - [AUDIT] System health check executed: Memory, Threads, and DB latency normal.</p>
+                        <p style="color: #38bdf8;">[2026-09-16 08:12:30] [INFO] com.nutrihealth.controller.PatientController - Daily meal intake calculation verified for patient record.</p>
+                        <p style="color: #4ade80;">[2026-09-16 08:25:12] [INFO] com.nutrihealth.service.AuditService - [AUDIT] it@nutrihealth.com viewed system dashboard.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

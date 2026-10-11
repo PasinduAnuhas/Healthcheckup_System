@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Health Dossier – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body { background: #f8fafc; color: #1e293b; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .report-page { max-width: 900px; margin: 30px auto; background: #ffffff; padding: 40px; border-radius: 10px; box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+        .report-header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #e2e8f0; padding-bottom: 24px; margin-bottom: 28px; }
+        .report-logo { font-size: 24px; font-weight: 700; color: #0284c7; }
+        .report-meta { text-align: right; font-size: 13px; color: #64748b; }
+        .section-title { font-size: 16px; font-weight: 700; text-transform: uppercase; color: #0f172a; margin-top: 28px; margin-bottom: 14px; border-left: 4px solid #0284c7; padding-left: 10px; }
+        .meta-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+        .meta-box { background: #f1f5f9; padding: 12px 16px; border-radius: 6px; }
+        .meta-box label { font-size: 11px; text-transform: uppercase; color: #64748b; display: block; font-weight: 600; margin-bottom: 4px; }
+        .meta-box span { font-size: 15px; font-weight: 600; color: #1e293b; }
+        table.dossier-table { width: 100%; border-collapse: collapse; margin-top: 12px; margin-bottom: 24px; font-size: 13px; }
+        table.dossier-table th { background: #f8fafc; text-align: left; padding: 10px 12px; border-bottom: 2px solid #cbd5e1; color: #475569; }
+        table.dossier-table td { padding: 10px 12px; border-bottom: 1px solid #e2e8f0; }
+        .print-btn-bar { display: flex; gap: 12px; margin-bottom: 20px; justify-content: flex-end; }
+        @media print {
+            .no-print { display: none !important; }
+            .report-page { box-shadow: none; margin: 0; padding: 0; }
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body>
+    <div class="report-page">
+        <div class="print-btn-bar no-print">
+            <button onclick="window.print()" class="btn btn-primary btn-sm"><i class="fas fa-print"></i> Print Official Dossier</button>
+            <a th:href="@{'/reports/patient/' + ${patient.id} + '/export-csv'}" class="btn btn-outline btn-sm"><i class="fas fa-file-csv"></i> Download CSV</a>
+            <button onclick="window.history.back()" class="btn btn-secondary btn-sm"><i class="fas fa-arrow-left"></i> Return</button>
+        </div>
+
+        <div class="report-header">
+            <div>
+                <div class="report-logo"><i class="fas fa-heartbeat text-primary"></i> NutriHealth Clinical Dossier</div>
+                <div style="font-size: 12px; color: #64748b; margin-top: 4px;">Institutional Dietetics &amp; Cardiometabolic Telemetry</div>
+            </div>
+            <div class="report-meta">
+                <div>Document ID: <strong>NH-REC-<span th:text="${patient.id}">001</span></strong></div>
+                <div>Generated: <span th:text="${generatedDate}">2026-09-16</span></div>
+                <div>Classification: <strong>Confidential Medical Data</strong></div>
+            </div>
+        </div>
+
+        <div class="section-title">Patient Identification &amp; Biometrics</div>
+        <div class="meta-grid">
+            <div class="meta-box">
+                <label>Full Patient Name</label>
+                <span th:text="${patient.fullName}">Eleanor Vance</span>
+            </div>
+            <div class="meta-box">
+                <label>Email &amp; Phone</label>
+                <span><span th:text="${patient.email}">email</span> &bull; <span th:text="${patient.phone}">phone</span></span>
+            </div>
+            <div class="meta-box">
+                <label>Blood Group</label>
+                <span th:text="${profile.bloodGroup != null ? profile.bloodGroup : 'O+'}">O+</span>
+            </div>
+            <div class="meta-box">
+                <label>Height &amp; Current Weight</label>
+                <span><span th:text="${profile.heightCm}">175</span> cm &bull; <span th:text="${profile.currentWeightKg}">72.0</span> kg</span>
+            </div>
+            <div class="meta-box">
+                <label>Calculated BMI</label>
+                <span th:text="${profile.bmi != null ? profile.bmi : '23.5'}">23.5</span>
+            </div>
+            <div class="meta-box">
+                <label>Target Weight</label>
+                <span><span th:text="${profile.targetWeightKg != null ? profile.targetWeightKg : '68.0'}">68.0</span> kg</span>
+            </div>
+        </div>
+
+        <div class="meta-grid" style="grid-template-columns: 1fr 1fr;">
+            <div class="meta-box">
+                <label>Known Allergies</label>
+                <span th:text="${profile.allergies != null and !profile.allergies.isEmpty() ? profile.allergies : 'None recorded'}">None</span>
+            </div>
+            <div class="meta-box">
+                <label>Pre-existing Conditions</label>
+                <span th:text="${profile.medicalConditions != null and !profile.medicalConditions.isEmpty() ? profile.medicalConditions : 'None recorded'}">None</span>
+            </div>
+        </div>
+
+        <div class="section-title">Historical Vital Check-up Logs</div>
+        <table class="dossier-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Weight</th>
+                    <th>BP (mmHg)</th>
+                    <th>Glucose</th>
+                    <th>Heart Rate</th>
+                    <th>BMI</th>
+                    <th>Clinical Summary</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="rec : ${records}">
+                    <td th:text="${rec.recordDate}">2026-09-10</td>
+                    <td><span th:text="${rec.weightKg}">72.0</span> kg</td>
+                    <td><span th:text="${rec.systolicBp}">120</span>/<span th:text="${rec.diastolicBp}">80</span></td>
+                    <td><span th:text="${rec.bloodSugarMgDl}">95</span> mg/dL</td>
+                    <td><span th:text="${rec.heartRateBpm}">72</span> bpm</td>
+                    <td><strong th:text="${rec.bmi}">23.5</strong></td>
+                    <td th:text="${rec.statusSummary != null ? rec.statusSummary : 'Optimal vitals'}">Optimal vitals</td>
+                </tr>
+                <tr th:if="${records == null or records.isEmpty()}">
+                    <td colspan="7" style="text-align: center; color: #94a3b8;">No vital telemetry logs recorded yet.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">Physician Assessments &amp; Diagnoses</div>
+        <table class="dossier-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Attending Doctor</th>
+                    <th>Diagnosis</th>
+                    <th>Prescribed Regimen</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="a : ${assessments}">
+                    <td th:text="${a.assessmentDate}">2026-09-08</td>
+                    <td th:text="${a.doctor != null ? a.doctor.fullName : 'Dr. Smith'}">Dr. Smith</td>
+                    <td><strong th:text="${a.diagnosis}">Diagnosis</strong><br><small th:text="${a.symptoms}">Symptoms</small></td>
+                    <td><span th:text="${a.clinicalRecommendations}">Recommendations</span><br><em style="font-size: 11px;" th:text="${a.medications}">Rx</em></td>
+                </tr>
+                <tr th:if="${assessments == null or assessments.isEmpty()}">
+                    <td colspan="4" style="text-align: center; color: #94a3b8;">No medical assessments recorded yet.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">Active Clinical Diet Plan</div>
+        <div th:if="${plan != null}" class="meta-box" style="margin-bottom: 24px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                <strong style="font-size: 16px; color: #0284c7;" th:text="${plan.title}">Mediterranean Cardio Plan</strong>
+                <span style="font-size: 13px; font-weight: 700; color: #16a34a;" th:text="${plan.dailyCalorieTarget} + ' kcal / day'">2100 kcal / day</span>
+            </div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 8px;" th:text="${plan.objective}">Objective details</p>
+            <div style="font-size: 12px; color: #334155;">
+                <div><strong>Recommended:</strong> <span th:text="${plan.recommendedFoods}">Salads, Lean Protein</span></div>
+                <div><strong>Restricted:</strong> <span th:text="${plan.restrictedFoods}">Trans Fats, Refined Sugar</span></div>
+            </div>
+        </div>
+        <div th:if="${plan == null}" style="font-size: 13px; color: #94a3b8; margin-bottom: 24px;">
+            No active institutional diet plan currently assigned.
+        </div>
+
+        <div style="border-top: 1px solid #e2e8f0; padding-top: 16px; margin-top: 30px; display: flex; justify-content: space-between; font-size: 11px; color: #94a3b8;">
+            <span>NutriHealth Telehealth Portal &bull; Medical Records Department</span>
+            <span>Electronic Signature Verified &bull; ISO-27001 Certified</span>
+        </div>
+    </div>
+</body>
+</html>

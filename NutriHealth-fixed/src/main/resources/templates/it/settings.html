@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment Settings – IT Operations – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('settings')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Environment Configuration</span>
+                    <h1 class="page-title">Enterprise System Parameters</h1>
+                </div>
+            </div>
+
+            <div class="panel-card" style="max-width: 800px;">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-sliders-h text-primary"></i> Production Runtime Settings</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="form-group">
+                        <label>Application Name</label>
+                        <input type="text" class="form-control" value="NutriHealth – Web-Based Diet Planning & Health Check-up System" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Ingress Gateway Port</label>
+                        <input type="text" class="form-control" value="3000 (Internal proxy binding 0.0.0.0)" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Session Expiration Timeout</label>
+                        <input type="text" class="form-control" value="60 Minutes (Sliding expiration)" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Multipart Upload Size Ceiling</label>
+                        <input type="text" class="form-control" value="5 MB" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Audit Retention Period</label>
+                        <input type="text" class="form-control" value="365 Days (HIPAA &amp; GDPR compliant)" disabled>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

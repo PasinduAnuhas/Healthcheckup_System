@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="NutriHealth - secure diet planning, health monitoring and clinic coordination platform.">
+    <title>NutriHealth | Smarter Health, Better Nutrition</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/landing-premium.css}">
+</head>
+<body class="landing-body premium-landing">
+
+<header class="landing-header premium-header" id="top">
+    <div class="landing-container nav-flex">
+        <a th:href="@{/}" class="brand-link premium-brand" aria-label="NutriHealth home">
+            <span class="brand-badge"><i class="fas fa-heart-pulse"></i></span>
+            <span class="brand-copy"><span class="brand-text">Nutri<span class="brand-accent">Health</span></span><small>Care • Nutrition • Progress</small></span>
+        </a>
+
+        <nav class="nav-links premium-nav" aria-label="Main navigation">
+            <a href="#features" data-nav="features">Features</a>
+            <a href="#roles" data-nav="roles">Clinical Roles</a>
+            <a href="#about" data-nav="about">About System</a>
+            <a href="#security" data-nav="security">Security</a>
+            <a href="#demo-access" class="nav-highlight" data-nav="demo-access">Demo Access</a>
+        </nav>
+
+        <div class="nav-actions">
+            <a th:href="@{/login}" class="btn btn-outline">Sign In</a>
+            <a th:href="@{/register}" class="btn btn-primary">Get Started <i class="fas fa-arrow-right"></i></a>
+        </div>
+    </div>
+</header>
+
+<main>
+    <!-- HERO -->
+    <section class="hero-section premium-hero">
+        <div class="hero-video-wrap" aria-hidden="true">
+            <video class="hero-video" autoplay muted loop playsinline preload="metadata" poster="/video/healthcare-bg-poster.jpg">
+                <source th:src="@{/video/healthcare-bg.mp4}" type="video/mp4">
+            </video>
+            <div class="hero-video-overlay"></div>
+        </div>
+        <div class="hero-orb orb-one"></div>
+        <div class="hero-orb orb-two"></div>
+
+        <div class="landing-container hero-grid premium-hero-grid">
+            <div class="hero-text premium-hero-text">
+                <div class="pill-badge premium-pill"><span class="live-dot"></span> SECURE DIGITAL HEALTH PLATFORM</div>
+                <p class="eyebrow"><span>01</span> Connected care, designed around people</p>
+                <h1 class="hero-title">Health care that feels <em>personal.</em></h1>
+                <p class="hero-subtitle">Plan smarter meals, organize health records, follow progress and connect patients with healthcare professionals through one secure digital workspace.</p>
+                <div class="hero-cta-group">
+                    <a th:href="@{/login}" class="btn btn-primary btn-lg">Launch Portal <i class="fas fa-arrow-up-right-from-square"></i></a>
+                    <a href="#features" class="btn btn-soft btn-lg">Explore Platform <i class="fas fa-arrow-down"></i></a>
+                </div>
+                <div class="hero-proof-row">
+                    <div><strong>06</strong><span>clinical roles</span></div>
+                    <div><strong>24/7</strong><span>web access</span></div>
+                    <div><strong>01</strong><span>connected workspace</span></div>
+                </div>
+            </div>
+
+            <div class="hero-visual" aria-label="NutriHealth dashboard preview">
+                <div class="floating-chip chip-top"><i class="fas fa-shield-heart"></i> Role-based security</div>
+                <div class="floating-chip chip-bottom"><i class="fas fa-circle-check"></i> Care plan updated</div>
+                <div class="hero-dashboard-card">
+                    <div class="mini-topline"><span><i class="fas fa-chart-line"></i> HEALTH OVERVIEW</span><span class="mini-live"><i class="fas fa-circle"></i> LIVE</span></div>
+                    <div class="patient-preview">
+                        <div>
+                            <span class="small-label">PATIENT JOURNEY</span>
+                            <h3>Alex's wellness plan</h3>
+                            <p>Weekly progress snapshot</p>
+                        </div>
+                        <div class="avatar-stack"><span>A</span><span><i class="fas fa-user-md"></i></span><span><i class="fas fa-apple-whole"></i></span></div>
+                    </div>
+                    <div class="metric-grid">
+                        <div class="metric-tile mint"><span>Current BMI</span><strong>23.16</strong><small>Healthy range</small></div>
+                        <div class="metric-tile blue"><span>Blood Pressure</span><strong>120/78</strong><small>mmHg</small></div>
+                        <div class="metric-tile amber"><span>Daily Target</span><strong>2,150</strong><small>kcal / day</small></div>
+                        <div class="metric-tile violet"><span>Plan Progress</span><strong>78%</strong><small>Day 47 of 60</small></div>
+                    </div>
+                    <div class="mini-progress"><div><span>Personalized care plan</span><b>78%</b></div><span class="progress-track"><i style="width:78%"></i></span></div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-cue"><span>Scroll to explore</span><i class="fas fa-arrow-down"></i></div>
+    </section>
+
+    <!-- TRUST STRIP -->
+    <section class="trust-strip">
+        <div class="landing-container trust-grid">
+            <div><span class="trust-icon"><i class="fas fa-user-shield"></i></span><div><b>Secure access</b><small>Role-aware permissions</small></div></div>
+            <div><span class="trust-icon"><i class="fas fa-heart-circle-check"></i></span><div><b>Centralized records</b><small>One organized health view</small></div></div>
+            <div><span class="trust-icon"><i class="fas fa-utensils"></i></span><div><b>Personalized nutrition</b><small>Plans built around needs</small></div></div>
+            <div><span class="trust-icon"><i class="fas fa-chart-simple"></i></span><div><b>Progress insights</b><small>Track changes over time</small></div></div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section id="features" class="section-padded premium-section features-section">
+        <div class="landing-container">
+            <div class="section-heading-row">
+                <div><span class="section-kicker">02 / PLATFORM</span><h2>Everything your care journey needs.</h2></div>
+                <p>One connected platform for nutrition planning, health records, progress monitoring and clinic coordination.</p>
+            </div>
+            <div class="feature-showcase-grid">
+                <article class="feature-card feature-large">
+                    <div class="feature-number">01</div><span class="feature-icon"><i class="fas fa-file-medical"></i></span>
+                    <h3>Patient Health Records</h3><p>Keep health indicators, medical history, check-ups and clinical notes organized in one secure place.</p>
+                    <div class="feature-visual records-visual"><span><i class="fas fa-heart-pulse"></i> 120 / 78</span><span><i class="fas fa-weight-scale"></i> 73.4 kg</span><span><i class="fas fa-droplet"></i> 94 mg/dL</span></div>
+                </article>
+                <article class="feature-card accent-card">
+                    <div class="feature-number">02</div><span class="feature-icon"><i class="fas fa-bowl-food"></i></span>
+                    <h3>Personalized Diet Plans</h3><p>Build daily meal plans around health goals, nutrition needs and dietary preferences.</p>
+                    <div class="meal-line"><span>Breakfast</span><b>Oat bowl</b><em>420 kcal</em></div><div class="meal-line"><span>Lunch</span><b>Green bowl</b><em>560 kcal</em></div>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-number">03</div><span class="feature-icon"><i class="fas fa-chart-line"></i></span>
+                    <h3>Health Progress</h3><p>Compare current and previous health records to understand progress over time.</p>
+                    <div class="sparkline"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-number">04</div><span class="feature-icon"><i class="fas fa-calendar-check"></i></span>
+                    <h3>Appointments</h3><p>Coordinate patient and professional schedules with clear appointment status and reminders.</p>
+                    <div class="appointment-pill"><span>Today</span><b>09:30 AM</b><em>Confirmed</em></div>
+                </article>
+                <article class="feature-card">
+                    <div class="feature-number">05</div><span class="feature-icon"><i class="fas fa-comments"></i></span>
+                    <h3>Care Communication</h3><p>Keep messages, reminders and professional recommendations connected to the care workflow.</p>
+                    <div class="message-preview"><span class="message-avatar">DR</span><span><b>New recommendation</b><small>Review your updated meal plan</small></span><i class="fas fa-chevron-right"></i></div>
+                </article>
+                <article class="feature-card feature-dark-accent">
+                    <div class="feature-number">06</div><span class="feature-icon"><i class="fas fa-chart-pie"></i></span>
+                    <h3>Reports &amp; Administration</h3><p>Support clinic operations with organized reports, activities, patient lists and management tools.</p>
+                    <div class="report-bars"><span style="height:45%"></span><span style="height:68%"></span><span style="height:52%"></span><span style="height:82%"></span><span style="height:74%"></span></div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ROLES -->
+    <section id="roles" class="section-padded roles-section">
+        <div class="landing-container">
+            <div class="center-heading"><span class="section-kicker">03 / CLINICAL ROLES</span><h2>One platform. Six perspectives.</h2><p>Each role gets a focused workspace with permissions matched to its responsibilities.</p></div>
+            <div class="role-showcase-grid">
+                <article class="role-card"><span class="role-index">01</span><div class="role-icon patient"><i class="fas fa-user"></i></div><h3>Patient</h3><p>Health records, diet plans, food intake, appointments and personal progress.</p><span class="role-tag">Self-service</span></article>
+                <article class="role-card"><span class="role-index">02</span><div class="role-icon doctor"><i class="fas fa-user-doctor"></i></div><h3>Doctor</h3><p>Health assessments, clinical records, patient review and recommendations.</p><span class="role-tag">Clinical care</span></article>
+                <article class="role-card"><span class="role-index">03</span><div class="role-icon nutrition"><i class="fas fa-apple-whole"></i></div><h3>Nutritionist</h3><p>Nutrition assessment, meal recommendations, diet plans and food logs.</p><span class="role-tag">Nutrition care</span></article>
+                <article class="role-card"><span class="role-index">04</span><div class="role-icon coordinator"><i class="fas fa-people-arrows"></i></div><h3>Care Coordinator</h3><p>Appointments, follow-ups, communication and care coordination.</p><span class="role-tag">Coordination</span></article>
+                <article class="role-card"><span class="role-index">05</span><div class="role-icon admin"><i class="fas fa-hospital"></i></div><h3>Clinic Admin</h3><p>Clinic operations, patient management, reports and activity oversight.</p><span class="role-tag">Operations</span></article>
+                <article class="role-card"><span class="role-index">06</span><div class="role-icon it"><i class="fas fa-server"></i></div><h3>IT Operations</h3><p>User access, audit logs, system health, security and operational controls.</p><span class="role-tag">Technology</span></article>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT / WORKFLOW -->
+    <section id="about" class="section-padded about-section">
+        <div class="landing-container about-grid">
+            <div class="about-copy"><span class="section-kicker">04 / ABOUT NUTRIHEALTH</span><h2>Designed to connect the small details that shape better care.</h2><p>NutriHealth brings diet planning, health information, progress tracking, appointments and communication into a single web-based workspace.</p>
+                <div class="about-points"><div><i class="fas fa-check"></i><span><b>Centralized information</b><small>Reduce scattered records and repetitive workflows.</small></span></div><div><i class="fas fa-check"></i><span><b>Personalized planning</b><small>Support nutrition plans based on individual information.</small></span></div><div><i class="fas fa-check"></i><span><b>Connected professionals</b><small>Help patients and care teams coordinate in one place.</small></span></div></div>
+            </div>
+            <div class="workflow-card"><div class="workflow-top"><span>CARE WORKFLOW</span><b>01 — 05</b></div><div class="workflow-step active"><span>01</span><div><b>Patient profile</b><small>Personal &amp; health information</small></div><i class="fas fa-arrow-right"></i></div><div class="workflow-step"><span>02</span><div><b>Health assessment</b><small>Vitals &amp; clinical records</small></div><i class="fas fa-arrow-right"></i></div><div class="workflow-step"><span>03</span><div><b>Nutrition plan</b><small>Meals &amp; recommendations</small></div><i class="fas fa-arrow-right"></i></div><div class="workflow-step"><span>04</span><div><b>Progress monitoring</b><small>Track changes over time</small></div><i class="fas fa-arrow-right"></i></div><div class="workflow-step"><span>05</span><div><b>Care coordination</b><small>Appointments &amp; communication</small></div><i class="fas fa-check-circle"></i></div></div>
+        </div>
+    </section>
+
+    <!-- SECURITY -->
+    <section id="security" class="section-padded security-section">
+        <div class="landing-container security-panel">
+            <div class="security-copy"><span class="section-kicker">05 / SECURITY</span><h2>Access should follow responsibility.</h2><p>NutriHealth uses role-based access so each user sees the workspace and information appropriate to their role.</p><div class="security-list"><span><i class="fas fa-lock"></i> BCrypt password protection</span><span><i class="fas fa-user-shield"></i> Role-based authorization</span><span><i class="fas fa-file-shield"></i> Audit-ready activity records</span><span><i class="fas fa-mobile-screen"></i> Responsive access</span></div></div>
+            <div class="security-visual"><div class="security-ring"><div><i class="fas fa-shield-halved"></i><b>Protected</b><small>Clinical workspace</small></div></div><span class="security-node node-a"><i class="fas fa-user"></i> Patient</span><span class="security-node node-b"><i class="fas fa-user-doctor"></i> Doctor</span><span class="security-node node-c"><i class="fas fa-apple-whole"></i> Nutrition</span></div>
+        </div>
+    </section>
+
+    <!-- DEMO ACCESS -->
+    <section id="demo-access" class="section-padded demo-section">
+        <div class="landing-container">
+            <div class="section-heading-row demo-heading"><div><span class="section-kicker">06 / DEMO ACCESS</span><h2>Step inside every role.</h2></div><p>Use the demo accounts to explore the role-based experience. Credentials are provided for development and demonstration purposes.</p></div>
+            <div class="demo-role-grid premium-demo-grid">
+                <div class="demo-card premium-demo-card"><div class="demo-card-top"><span class="demo-icon patient"><i class="fas fa-user"></i></span><span>01</span></div><h3>Patient</h3><code>patient@nutrihealth.com</code><small>Password: Patient@123</small><p>Personal health, diet plans, food intake and progress.</p><a th:href="@{/login(demo='patient')}" class="demo-link">Open demo <i class="fas fa-arrow-right"></i></a></div>
+                <div class="demo-card premium-demo-card"><div class="demo-card-top"><span class="demo-icon doctor"><i class="fas fa-user-doctor"></i></span><span>02</span></div><h3>Doctor</h3><code>doctor@nutrihealth.com</code><small>Password: Doctor@123</small><p>Patient review, assessments, appointments and recommendations.</p><a th:href="@{/login(demo='doctor')}" class="demo-link">Open demo <i class="fas fa-arrow-right"></i></a></div>
+                <div class="demo-card premium-demo-card"><div class="demo-card-top"><span class="demo-icon nutritionist"><i class="fas fa-apple-whole"></i></span><span>03</span></div><h3>Nutritionist</h3><code>nutritionist@nutrihealth.com</code><small>Password: Nutritionist@123</small><p>Meal recommendations, food database and personalized plans.</p><a th:href="@{/login(demo='nutritionist')}" class="demo-link">Open demo <i class="fas fa-arrow-right"></i></a></div>
+                <div class="demo-card premium-demo-card"><div class="demo-card-top"><span class="demo-icon coordinator"><i class="fas fa-people-arrows"></i></span><span>04</span></div><h3>Coordinator</h3><code>coordinator@nutrihealth.com</code><small>Password: Coordinator@123</small><p>Appointments, follow-ups, messages and care coordination.</p><a th:href="@{/login(demo='coordinator')}" class="demo-link">Open demo <i class="fas fa-arrow-right"></i></a></div>
+                <div class="demo-card premium-demo-card"><div class="demo-card-top"><span class="demo-icon admin"><i class="fas fa-hospital"></i></span><span>05</span></div><h3>Clinic Admin</h3><code>admin@nutrihealth.com</code><small>Password: Admin@123</small><p>Clinic operations, staff, patients and reports.</p><a th:href="@{/login(demo='admin')}" class="demo-link">Open demo <i class="fas fa-arrow-right"></i></a></div>
+                <div class="demo-card premium-demo-card"><div class="demo-card-top"><span class="demo-icon it"><i class="fas fa-server"></i></span><span>06</span></div><h3>IT Operations</h3><code>it@nutrihealth.com</code><small>Password: IT@123</small><p>User access, security, audit logs and system health.</p><a th:href="@{/login(demo='it')}" class="demo-link">Open demo <i class="fas fa-arrow-right"></i></a></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="final-cta"><div class="landing-container final-cta-inner"><div><span class="section-kicker">READY WHEN YOU ARE</span><h2>Bring the whole care journey together.</h2><p>Explore NutriHealth through a secure role-based portal.</p></div><a th:href="@{/login}" class="btn btn-primary btn-lg">Enter NutriHealth <i class="fas fa-arrow-right"></i></a></div></section>
+</main>
+
+<footer class="premium-footer"><div class="landing-container footer-main"><a th:href="@{/}" class="premium-footer-brand"><span class="brand-badge"><i class="fas fa-heart-pulse"></i></span><span><b>NutriHealth</b><small>Care • Nutrition • Progress</small></span></a><div class="footer-links"><a href="#features">Features</a><a href="#roles">Clinical Roles</a><a href="#about">About System</a><a href="#security">Security</a><a href="#top">Back to top ↑</a></div></div><div class="landing-container footer-bottom"><span>© 2026 NutriHealth. Web-Based Diet Planning &amp; Health Check-up System.</span><span><i class="fas fa-lock"></i> Secure role-based access</span></div></footer>
+
+<script th:src="@{/js/main.js}"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const navLinks = document.querySelectorAll('.premium-nav a[data-nav]');
+        const sections = [...document.querySelectorAll('main section[id]')];
+        const header = document.querySelector('.premium-header');
+
+        navLinks.forEach(link => link.addEventListener('click', function (event) {
+            const target = document.querySelector(this.getAttribute('href'));
+            if (!target) return;
+            event.preventDefault();
+            const offset = header ? header.offsetHeight + 12 : 0;
+            window.scrollTo({ top: target.getBoundingClientRect().top + window.scrollY - offset, behavior: 'smooth' });
+        }));
+
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) return;
+                navLinks.forEach(link => link.classList.toggle('active', link.dataset.nav === entry.target.id));
+            });
+        }, { rootMargin: '-30% 0px -60% 0px', threshold: 0 });
+        sections.forEach(section => observer.observe(section));
+
+        const revealItems = document.querySelectorAll('.feature-card, .role-card, .premium-demo-card, .workflow-card, .security-panel');
+        const revealObserver = new IntersectionObserver(entries => entries.forEach(entry => {
+            if (entry.isIntersecting) { entry.target.classList.add('is-visible'); revealObserver.unobserve(entry.target); }
+        }), { threshold: 0.12 });
+        revealItems.forEach(item => revealObserver.observe(item));
+    });
+</script>
+</body>
+</html>

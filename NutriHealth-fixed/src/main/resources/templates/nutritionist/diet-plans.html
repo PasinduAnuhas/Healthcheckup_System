@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Plan Designer – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('diet-plans')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Clinical Prescriptions</span>
+                    <h1 class="page-title">Diet Plan Designer &amp; Regimens</h1>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}">Plan created!</span>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- Design Diet Plan Form -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-plus-circle text-primary"></i> Create Clinical Diet Plan</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <form th:action="@{/nutritionist/diet-plans}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <div class="form-group">
+                                <label>Assign Patient</label>
+                                <select name="patientId" class="form-control" required>
+                                    <option value="">-- Choose Patient --</option>
+                                    <option th:each="p : ${patients}" th:value="${p.user.id}" th:text="${p.user.fullName + ' (' + p.user.email + ')'}">
+                                        Eleanor Vance
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Plan Title</label>
+                                    <input type="text" name="title" class="form-control" placeholder="e.g. Anti-Inflammatory Mediterranean" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Daily Calorie Target (kcal)</label>
+                                    <input type="number" name="dailyCalorieTarget" class="form-control" placeholder="2100" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Clinical Objective</label>
+                                <textarea name="objective" class="form-control" rows="2" placeholder="Primary health goal: glycemic regulation, cardiovascular protection, weight management..." required></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Start Date</label>
+                                    <input type="date" name="startDate" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>End Date</label>
+                                    <input type="date" name="endDate" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <h4 style="font-size: 14px; text-transform: uppercase; color: #0284c7; margin: 20px 0 10px 0;">Meal Schedule Structure</h4>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Breakfast Menu</label>
+                                    <input type="text" name="breakfastFood" class="form-control" placeholder="e.g. Rolled oats, chia seeds, blueberries">
+                                </div>
+                                <div class="form-group">
+                                    <label>Breakfast Calories</label>
+                                    <input type="number" name="breakfastCalories" class="form-control" value="400">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Lunch Menu</label>
+                                    <input type="text" name="lunchFood" class="form-control" placeholder="e.g. Grilled salmon fillet with roasted asparagus">
+                                </div>
+                                <div class="form-group">
+                                    <label>Lunch Calories</label>
+                                    <input type="number" name="lunchCalories" class="form-control" value="650">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Dinner Menu</label>
+                                    <input type="text" name="dinnerFood" class="form-control" placeholder="e.g. Quinoa, sauteed kale, baked tofu">
+                                </div>
+                                <div class="form-group">
+                                    <label>Dinner Calories</label>
+                                    <input type="number" name="dinnerCalories" class="form-control" value="550">
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Recommended Foods</label>
+                                    <textarea name="recommendedFoods" class="form-control" rows="2" placeholder="Leafy greens, wild salmon, walnuts, olive oil"></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label>Restricted Foods</label>
+                                    <textarea name="restrictedFoods" class="form-control" rows="2" placeholder="High fructose syrup, trans fats, refined white flour"></textarea>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Nutritionist Clinical Notes</label>
+                                <textarea name="nutritionistNotes" class="form-control" rows="2" placeholder="Keep hydration at minimum 2.5L per day..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-save"></i> Prescribe Diet Plan</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Prescribed Diet Plans List -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-list text-success"></i> Existing Diet Plans</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <div class="table-responsive" th:if="${plans != null and !plans.isEmpty()}">
+                            <table class="app-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Patient</th>
+                                        <th>Target</th>
+                                        <th>Dates</th>
+                                        <th>Status</th>
+                                        <th>Dossier</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="plan : ${plans}">
+                                        <td><strong th:text="${plan.title}">Plan Title</strong></td>
+                                        <td th:text="${plan.patient.fullName}">Patient</td>
+                                        <td><span class="calorie-num" th:text="${plan.dailyCalorieTarget} + ' kcal'">2100 kcal</span></td>
+                                        <td><small th:text="${plan.startDate + ' to ' + plan.endDate}">dates</small></td>
+                                        <td><span class="status-badge" th:classappend="${plan.status == 'ACTIVE' ? 'confirmed' : 'completed'}" th:text="${plan.status}">ACTIVE</span></td>
+                                        <td>
+                                            <a th:href="@{'/reports/diet-plan/' + ${plan.id}}" class="btn btn-outline btn-xs" target="_blank"><i class="fas fa-print"></i> Report</a>
+                                            <details style="margin-top:6px;">
+                                                <summary class="btn btn-secondary btn-xs">Edit / Delete</summary>
+                                                <form th:action="@{'/nutritionist/diet-plans/' + ${plan.id} + '/update'}" method="post" style="margin-top:8px; min-width:260px;">
+                                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                    <input name="title" class="form-control" th:value="${plan.title}" required>
+                                                    <textarea name="objective" class="form-control" rows="2" th:text="${plan.objective}" required></textarea>
+                                                    <input type="number" name="dailyCalorieTarget" class="form-control" th:value="${plan.dailyCalorieTarget}" required>
+                                                    <div class="form-row"><input type="date" name="startDate" class="form-control" th:value="${plan.startDate}" required><input type="date" name="endDate" class="form-control" th:value="${plan.endDate}" required></div>
+                                                    <select name="status" class="form-control"><option value="ACTIVE" th:selected="${plan.status == 'ACTIVE'}">ACTIVE</option><option value="COMPLETED" th:selected="${plan.status == 'COMPLETED'}">COMPLETED</option><option value="SUSPENDED" th:selected="${plan.status == 'SUSPENDED'}">SUSPENDED</option></select>
+                                                    <textarea name="recommendedFoods" class="form-control" rows="2" th:text="${plan.recommendedFoods}"></textarea>
+                                                    <textarea name="restrictedFoods" class="form-control" rows="2" th:text="${plan.restrictedFoods}"></textarea>
+                                                    <textarea name="nutritionistNotes" class="form-control" rows="2" th:text="${plan.nutritionistNotes}"></textarea>
+                                                    <button type="submit" class="btn btn-primary btn-xs">Save Changes</button>
+                                                </form>
+                                                <form th:action="@{'/nutritionist/diet-plans/' + ${plan.id} + '/delete'}" method="post" style="margin-top:6px;" onsubmit="return confirm('Delete this diet plan?');">
+                                                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                    <button type="submit" class="btn btn-danger btn-xs">Delete</button>
+                                                </form>
+                                            </details>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="empty-state text-center" th:if="${plans == null or plans.isEmpty()}">
+                            <p class="text-muted">No diet plans created yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

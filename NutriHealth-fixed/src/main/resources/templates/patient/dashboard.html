@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <!-- Header Fragment -->
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <!-- Sidebar Fragment with activeLink='dashboard' -->
+        <aside th:replace="~{fragments/sidebar :: sidebar('dashboard')}"></aside>
+
+        <main class="app-main-content">
+            <!-- Page Header -->
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Clinical Telemetry Portal</span>
+                    <h1 class="page-title">Welcome back, <span th:text="${patient.fullName}">Eleanor Vance</span></h1>
+                </div>
+                <div class="header-actions">
+                    <a th:href="@{/patient/food-intake}" class="btn btn-primary btn-sm"><i class="fas fa-plus"></i> Log Meal</a>
+                    <a th:href="@{/patient/appointments}" class="btn btn-outline btn-sm"><i class="fas fa-calendar-plus"></i> Book Consultation</a>
+                    <a th:href="@{/patient/health-dossier}" class="btn btn-secondary btn-sm" target="_blank"><i class="fas fa-file-pdf"></i> Health Dossier</a>
+                </div>
+            </div>
+
+            <!-- Alerts Banner if any -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}">Success!</span>
+            </div>
+
+            <!-- Metric Cards Row -->
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-blue-light"><i class="fas fa-weight"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Current Weight</span>
+                        <div class="kpi-value"><span th:text="${profile.currentWeightKg != null ? profile.currentWeightKg : 72.0}">72.0</span> <small>kg</small></div>
+                        <span class="kpi-subtext" th:text="${'Target: ' + (profile.targetWeightKg != null ? profile.targetWeightKg : 68.0) + ' kg'}">Target: 68.0 kg</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-green-light"><i class="fas fa-chart-pie"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">BMI Score</span>
+                        <div class="kpi-value" th:text="${profile.bmi != null ? profile.bmi : '23.1'}">23.1</div>
+                        <span class="metric-badge success" th:text="${profile.bmiCategory != null ? profile.bmiCategory : 'Normal Weight'}">Normal</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-amber-light"><i class="fas fa-fire"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Calories Consumed Today</span>
+                        <div class="kpi-value"><span th:text="${todayCalories != null ? todayCalories : 0}">1,250</span> <small>kcal</small></div>
+                        <span class="kpi-subtext" th:text="${'Target: ' + (activePlan != null ? activePlan.dailyCalorieTarget : 2000) + ' kcal'}">Target: 2,000 kcal</span>
+                    </div>
+                </div>
+
+                <div class="kpi-card">
+                    <div class="kpi-icon bg-purple-light"><i class="fas fa-heartbeat"></i></div>
+                    <div class="kpi-info">
+                        <span class="kpi-label">Latest Blood Pressure</span>
+                        <div class="kpi-value" th:if="${latestRecord != null}">
+                            <span th:text="${latestRecord.systolicBp}">120</span>/<span th:text="${latestRecord.diastolicBp}">80</span> <small>mmHg</small>
+                        </div>
+                        <div class="kpi-value" th:if="${latestRecord == null}">120/80 <small>mmHg</small></div>
+                        <span class="kpi-subtext">Normotensive</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main Content 2-Column Grid -->
+            <div class="dashboard-grid-2">
+                <!-- Left Column: Active Diet Plan & Today's Meals -->
+                <div class="content-column">
+                    <!-- Active Diet Plan Card -->
+                    <div class="panel-card">
+                        <div class="panel-card-header">
+                            <div>
+                                <h3 class="panel-title"><i class="fas fa-utensils text-primary"></i> Active Clinical Diet Plan</h3>
+                                <span class="panel-subtitle">Assigned by Registered Dietitian</span>
+                            </div>
+                            <a th:href="@{/patient/diet-plan}" class="text-sm view-all-link">Full Diet Plan &rarr;</a>
+                        </div>
+                        <div class="panel-card-body" th:if="${activePlan != null}">
+                            <div class="active-plan-banner">
+                                <div class="plan-hero-title" th:text="${activePlan.title}">Cardiometabolic Vitality Plan</div>
+                                <p class="plan-desc" th:text="${activePlan.objective}">Focus on glycemic stability and lean protein synthesis.</p>
+                                <div class="plan-badges">
+                                    <span class="badge badge-info"><i class="fas fa-bullseye"></i> <span th:text="${activePlan.dailyCalorieTarget}">2100</span> kcal/day</span>
+                                    <span class="badge badge-success"><i class="fas fa-calendar"></i> Until <span th:text="${activePlan.endDate}">2026-10-15</span></span>
+                                </div>
+                            </div>
+
+                            <div class="meal-plan-mini-list" th:if="${activePlan.meals != null and !activePlan.meals.isEmpty()}">
+                                <div th:each="meal : ${activePlan.meals}" class="mini-meal-row">
+                                    <div class="meal-badge" th:text="${meal.mealType}">BREAKFAST</div>
+                                    <div class="meal-details">
+                                        <strong th:text="${meal.foodName}">Oatmeal with Walnuts</strong>
+                                        <span>Portion: <span th:text="${meal.portionSize}">1 bowl</span></span>
+                                    </div>
+                                    <div class="meal-cal"><span th:text="${meal.calories}">360</span> kcal</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="panel-card-body text-center empty-state" th:if="${activePlan == null}">
+                            <i class="fas fa-utensils empty-icon"></i>
+                            <p>No active diet plan currently assigned.</p>
+                            <a th:href="@{/patient/appointments}" class="btn btn-primary btn-sm">Schedule Nutritionist Consultation</a>
+                        </div>
+                    </div>
+
+                    <!-- Today's Logged Meals -->
+                    <div class="panel-card">
+                        <div class="panel-card-header">
+                            <div>
+                                <h3 class="panel-title"><i class="fas fa-apple-alt text-success"></i> Today's Food Intake Log</h3>
+                                <span class="panel-subtitle">Real-time calorie and macronutrient tracking</span>
+                            </div>
+                            <a th:href="@{/patient/food-intake}" class="btn btn-outline btn-xs"><i class="fas fa-plus"></i> Add Item</a>
+                        </div>
+                        <div class="panel-card-body">
+                            <div class="table-responsive" th:if="${todayIntakes != null and !todayIntakes.isEmpty()}">
+                                <table class="app-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Meal</th>
+                                            <th>Item &amp; Portion</th>
+                                            <th>Calories</th>
+                                            <th>Macros (P/C/F)</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr th:each="intake : ${todayIntakes}">
+                                            <td><span class="badge badge-secondary" th:text="${intake.mealType}">LUNCH</span></td>
+                                            <td><strong th:text="${intake.foodItem}">Grilled Chicken Salad</strong></td>
+                                            <td><span class="calorie-num" th:text="${intake.calories} + ' kcal'">450 kcal</span></td>
+                                            <td>
+                                                <small><span th:text="${intake.proteinG}">35</span>p &bull; <span th:text="${intake.carbsG}">12</span>c &bull; <span th:text="${intake.fatG}">8</span>f</small>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="empty-state text-center" th:if="${todayIntakes == null or todayIntakes.isEmpty()}">
+                                <p class="text-muted">No food logged yet today. Keep your nutrition on track!</p>
+                                <a th:href="@{/patient/food-intake}" class="btn btn-primary btn-sm">Log First Meal</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Telemetry Check-up, Appointments, Recommendations -->
+                <div class="content-column">
+                    <!-- Latest Check-up Telemetry -->
+                    <div class="panel-card">
+                        <div class="panel-card-header">
+                            <div>
+                                <h3 class="panel-title"><i class="fas fa-stethoscope text-primary"></i> Latest Clinical Check-up</h3>
+                                <span class="panel-subtitle" th:if="${latestRecord != null}" th:text="${'Recorded on ' + latestRecord.recordDate}">Recorded on 2026-09-10</span>
+                            </div>
+                            <a th:href="@{/patient/health-records}" class="text-sm view-all-link">All Records &rarr;</a>
+                        </div>
+                        <div class="panel-card-body" th:if="${latestRecord != null}">
+                            <div class="telemetry-grid">
+                                <div class="tele-box">
+                                    <span class="tele-label">Fasting Blood Sugar</span>
+                                    <span class="tele-val text-success"><span th:text="${latestRecord.bloodSugarMgDl}">94.0</span> <small>mg/dL</small></span>
+                                    <span class="tele-badge">Normal Glycemia</span>
+                                </div>
+                                <div class="tele-box">
+                                    <span class="tele-label">Resting Heart Rate</span>
+                                    <span class="tele-val text-primary"><span th:text="${latestRecord.heartRateBpm}">72</span> <small>bpm</small></span>
+                                    <span class="tele-badge">Normal Sinus</span>
+                                </div>
+                            </div>
+                            <div class="tele-note" th:if="${latestRecord.notes != null}">
+                                <i class="fas fa-comment-medical text-primary"></i>
+                                <span th:text="${latestRecord.notes}">Patient exhibits optimal cardiovascular recovery and stable glucose levels.</span>
+                            </div>
+                        </div>
+                        <div class="panel-card-body text-center empty-state" th:if="${latestRecord == null}">
+                            <i class="fas fa-file-medical empty-icon"></i>
+                            <p>No clinical check-up records yet.</p>
+                        </div>
+                    </div>
+
+                    <!-- Upcoming Appointments -->
+                    <div class="panel-card">
+                        <div class="panel-card-header">
+                            <div>
+                                <h3 class="panel-title"><i class="fas fa-calendar-check text-warning"></i> Clinic Appointments</h3>
+                                <span class="panel-subtitle">Doctor consultations &amp; Dietitian check-ins</span>
+                            </div>
+                            <a th:href="@{/patient/appointments}" class="text-sm view-all-link">Schedule &rarr;</a>
+                        </div>
+                        <div class="panel-card-body">
+                            <div class="appointment-mini-list" th:if="${appointments != null and !appointments.isEmpty()}">
+                                <div th:each="apt : ${appointments}" class="apt-mini-card">
+                                    <div class="apt-date-box">
+                                        <span class="apt-day" th:text="${#temporals.format(apt.appointmentDate, 'dd')}">18</span>
+                                        <span class="apt-month" th:text="${#temporals.format(apt.appointmentDate, 'MMM')}">Sep</span>
+                                    </div>
+                                    <div class="apt-info">
+                                        <div class="apt-title" th:text="${apt.type}">Clinical Follow-up</div>
+                                        <div class="apt-with">
+                                            <span th:if="${apt.doctor != null}">Dr. <span th:text="${apt.doctor.fullName}">Doctor</span></span>
+                                            <span th:if="${apt.nutritionist != null}">Nutritionist <span th:text="${apt.nutritionist.fullName}">Nutritionist</span></span>
+                                        </div>
+                                        <div class="apt-time"><i class="fas fa-clock"></i> <span th:text="${apt.appointmentTime}">10:30 AM</span></div>
+                                    </div>
+                                    <span class="status-badge" th:classappend="${apt.status == 'CONFIRMED' ? 'confirmed' : (apt.status == 'PENDING' ? 'pending' : 'completed')}" th:text="${apt.status}">CONFIRMED</span>
+                                </div>
+                            </div>
+                            <div class="empty-state text-center" th:if="${appointments == null or appointments.isEmpty()}">
+                                <p class="text-muted">No scheduled appointments.</p>
+                                <a th:href="@{/patient/appointments}" class="btn btn-outline btn-sm">Book Consultation</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personalized Meal Recommendations -->
+                    <div class="panel-card" th:if="${recommendations != null and !recommendations.isEmpty()}">
+                        <div class="panel-card-header">
+                            <h3 class="panel-title"><i class="fas fa-lightbulb text-warning"></i> Nutritionist Recommendations</h3>
+                            <a th:href="@{/patient/meal-recommendations}" class="text-sm view-all-link">View All</a>
+                        </div>
+                        <div class="panel-card-body">
+                            <div th:each="rec : ${recommendations}" class="rec-mini-item">
+                                <div class="rec-head">
+                                    <strong th:text="${rec.title}">Avocado Quinoa Bowl</strong>
+                                    <span class="badge badge-info" th:text="${rec.calorieEstimate} + ' kcal'">420 kcal</span>
+                                </div>
+                                <p class="rec-desc" th:text="${rec.description}">Rich in heart-healthy monounsaturated fats and dietary fiber.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Footer Fragment -->
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script th:src="@{/js/dashboard.js}"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Assessments – Dr. Portal – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('assessments')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Clinical Diagnoses</span>
+                    <h1 class="page-title">Physician Health Assessments</h1>
+                </div>
+            </div>
+
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i> <span th:text="${successMessage}">Assessment issued!</span>
+            </div>
+
+            <div class="dashboard-grid-2">
+                <!-- New Assessment Form -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-plus-circle text-primary"></i> Issue Clinical Assessment</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <form th:action="@{/doctor/health-assessments}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                            <div class="form-group">
+                                <label>Patient</label>
+                                <select name="patientId" class="form-control" required>
+                                    <option value="">-- Choose Patient --</option>
+                                    <option th:each="p : ${patients}" th:value="${p.user.id}" th:text="${p.user.fullName + ' (' + p.user.email + ')'}">
+                                        Eleanor Vance
+                                    </option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Clinical Diagnosis</label>
+                                <input type="text" name="diagnosis" class="form-control" placeholder="e.g. Mild Hypertension, Type II Glycemic Elevation" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Observed / Reported Symptoms</label>
+                                <textarea name="symptoms" class="form-control" rows="2" placeholder="Fatigue, morning headaches, elevated postprandial glucose..."></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Clinical Directives &amp; Lifestyle Recommendations</label>
+                                <textarea name="clinicalRecommendations" class="form-control" rows="3" placeholder="Low sodium DASH diet, 30 min daily brisk walking..." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Prescribed Pharmacotherapy / Supplements (Rx)</label>
+                                <input type="text" name="medications" class="form-control" placeholder="e.g. CoQ10 200mg, Omega-3 1000mg">
+                            </div>
+
+                            <div class="form-group">
+                                <label>Next Check-up Date <span class="text-muted">(optional)</span></label>
+                                <input type="date" name="nextCheckupDate" class="form-control">
+                            </div>
+
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Publish Medical Assessment</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Recent Issued Assessments -->
+                <div class="panel-card">
+                    <div class="panel-card-header">
+                        <h3 class="panel-title"><i class="fas fa-history text-success"></i> Issued Assessments Log</h3>
+                    </div>
+                    <div class="panel-card-body">
+                        <div th:if="${assessments != null and !assessments.isEmpty()}">
+                            <div th:each="a : ${assessments}" style="padding: 14px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 12px;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                    <strong style="color: var(--accent);" th:text="${a.patient.fullName}">Patient</strong>
+                                    <span class="text-sm text-muted" th:text="${a.assessmentDate}">2026-09-08</span>
+                                </div>
+                                <div style="font-weight: 600; font-size: 14px; margin-bottom: 4px; color: var(--text-main);" th:text="${a.diagnosis}">Diagnosis</div>
+                                <p style="font-size: 13px; color: var(--text-muted); margin: 0 0 6px 0;" th:text="${a.clinicalRecommendations}">Recommendations</p>
+                                <small th:if="${a.medications != null and !a.medications.isEmpty()}" style="color: var(--text-dim);">
+                                    <strong style="color: var(--primary);">Rx:</strong> <span th:text="${a.medications}">Meds</span>
+                                </small>
+                                <details style="margin-top:8px;"><summary class="btn btn-secondary btn-xs">Edit / Delete</summary>
+                                    <form th:action="@{'/doctor/health-assessments/' + ${a.id} + '/update'}" method="post" style="margin-top:8px;"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                        <input type="hidden" name="patientId" th:value="${a.patient.id}">
+                                        <input name="diagnosis" class="form-control" th:value="${a.diagnosis}" required>
+                                        <textarea name="symptoms" class="form-control" rows="2" th:text="${a.symptoms}"></textarea>
+                                        <textarea name="clinicalRecommendations" class="form-control" rows="2" th:text="${a.clinicalRecommendations}" required></textarea>
+                                        <input name="medications" class="form-control" th:value="${a.medications}">
+                                        <input type="date" name="nextCheckupDate" class="form-control" th:value="${a.nextCheckupDate}">
+                                        <select name="status" class="form-control"><option value="COMPLETED" th:selected="${a.status == 'COMPLETED'}">COMPLETED</option><option value="PENDING" th:selected="${a.status == 'PENDING'}">PENDING</option></select>
+                                        <button type="submit" class="btn btn-primary btn-xs">Save Changes</button>
+                                    </form>
+                                    <form th:action="@{'/doctor/health-assessments/' + ${a.id} + '/delete'}" method="post" style="margin-top:6px;" onsubmit="return confirm('Delete this assessment?');"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button type="submit" class="btn btn-danger btn-xs">Delete</button></form>
+                                </details>
+                            </div>
+                        </div>
+                        <div class="empty-state text-center" th:if="${assessments == null or assessments.isEmpty()}">
+                            <p class="text-muted">No assessments issued yet.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

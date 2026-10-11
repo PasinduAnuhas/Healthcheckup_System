@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diet Plans Registry – Admin – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('diet-plans')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Clinic Administration</span>
+                    <h1 class="page-title">Dietary Regimens Directory</h1>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-utensils text-primary"></i> Active &amp; Historical Diet Prescriptions</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="table-responsive">
+                        <table class="app-table">
+                            <thead>
+                                <tr>
+                                    <th>Plan Title</th>
+                                    <th>Patient</th>
+                                    <th>Daily Calorie Target</th>
+                                    <th>Duration</th>
+                                    <th>Status</th>
+                                    <th>Print View</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="plan : ${plans}">
+                                    <td><strong th:text="${plan.title}">Plan Title</strong></td>
+                                    <td th:text="${plan.patient.fullName}">Patient</td>
+                                    <td><span class="calorie-num" th:text="${plan.dailyCalorieTarget} + ' kcal'">2100 kcal</span></td>
+                                    <td><small th:text="${plan.startDate + ' to ' + plan.endDate}">dates</small></td>
+                                    <td><span class="status-badge" th:classappend="${plan.status == 'ACTIVE' ? 'confirmed' : 'completed'}" th:text="${plan.status}">ACTIVE</span></td>
+                                    <td>
+                                        <a th:href="@{'/reports/diet-plan/' + ${plan.id}}" class="btn btn-outline btn-xs" target="_blank"><i class="fas fa-print"></i> Report</a>
+                                        <form th:action="@{'/admin/diet-plans/' + ${plan.id} + '/delete'}" method="post" style="display:inline;" onsubmit="return confirm('Delete this diet plan?');"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button type="submit" class="btn btn-danger btn-xs"><i class="fas fa-trash"></i></button></form>
+                                    </td>
+                                </tr>
+                                <tr th:if="${plans == null or plans.isEmpty()}">
+                                    <td colspan="6" class="text-center text-muted">No diet plans recorded.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In – NutriHealth System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+    <link rel="stylesheet" th:href="@{/css/auth-premium.css}">
+</head>
+<body class="auth-body">
+
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <div class="auth-brand">
+                <a th:href="@{/}" class="brand-link">
+                    <span class="brand-badge"><i class="fas fa-heartbeat"></i></span>
+                    <span class="brand-text">Nutri<span class="brand-accent">Health</span></span>
+                </a>
+                <p class="auth-tagline">Clinical Nutrition &amp; Health Telemetry Portal</p>
+            </div>
+
+            <!-- Flash Error Message -->
+            <div th:if="${errorMessage}" class="alert alert-danger">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span th:text="${errorMessage}">Error description</span>
+            </div>
+
+            <!-- Flash Success Message -->
+            <div th:if="${successMessage}" class="alert alert-success">
+                <i class="fas fa-check-circle"></i>
+                <span th:text="${successMessage}">Success description</span>
+            </div>
+
+            <!-- Login Form -->
+            <form th:action="@{/login}" method="post" class="auth-form" id="loginForm">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                <div class="form-group">
+                    <label for="username"><i class="fas fa-envelope"></i> Clinical Email</label>
+                    <input type="email" id="username" name="username" class="form-control"
+                           th:value="${registeredEmail}" placeholder="name@nutrihealth.com" required autofocus>
+                </div>
+
+                <div class="form-group">
+                    <div class="label-split">
+                        <label for="password"><i class="fas fa-lock"></i> Security Password</label>
+                        <a th:href="@{/forgot-password}" class="text-sm forgot-link">Forgot password?</a>
+                    </div>
+                    <div class="password-input-wrap">
+                        <input type="password" id="password" name="password" class="form-control" 
+                               placeholder="Enter your password" required>
+                        <button type="button" class="pwd-toggle-btn" onclick="togglePasswordVisibility('password')">
+                            <i class="fas fa-eye" id="password-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group-checkbox">
+                    <label class="checkbox-label">
+                        <input type="checkbox" name="remember-me" id="remember-me">
+                        <span>Keep clinical session active</span>
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block btn-lg">
+                    <i class="fas fa-sign-in-alt"></i> Sign In to Portal
+                </button>
+            </form>
+
+            <!-- 1-Click Demo Fill Selector (Requirement 31) -->
+            <div class="demo-selector-wrap">
+                <div class="demo-divider">
+                    <span>1-CLICK DEMO LOGIN</span>
+                </div>
+                <div class="demo-pills-grid">
+                    <button type="button" class="demo-fill-btn patient" onclick="fillDemo('patient@nutrihealth.com', 'Patient@123')">
+                        <i class="fas fa-user-injured"></i> Patient
+                    </button>
+                    <button type="button" class="demo-fill-btn doctor" onclick="fillDemo('doctor@nutrihealth.com', 'Doctor@123')">
+                        <i class="fas fa-user-md"></i> Doctor
+                    </button>
+                    <button type="button" class="demo-fill-btn nutritionist" onclick="fillDemo('nutritionist@nutrihealth.com', 'Nutritionist@123')">
+                        <i class="fas fa-apple-alt"></i> Nutritionist
+                    </button>
+                    <button type="button" class="demo-fill-btn coordinator" onclick="fillDemo('coordinator@nutrihealth.com', 'Coordinator@123')">
+                        <i class="fas fa-hands-helping"></i> Coordinator
+                    </button>
+                    <button type="button" class="demo-fill-btn admin" onclick="fillDemo('admin@nutrihealth.com', 'Admin@123')">
+                        <i class="fas fa-hospital-user"></i> Admin
+                    </button>
+                    <button type="button" class="demo-fill-btn it" onclick="fillDemo('it@nutrihealth.com', 'IT@123')">
+                        <i class="fas fa-server"></i> IT Officer
+                    </button>
+                </div>
+            </div>
+
+            <div class="auth-footer-text">
+                Don't have an account yet? <a th:href="@{/register}">Register as Patient</a>
+            </div>
+            <div class="auth-back-home">
+                <a th:href="@{/}"><i class="fas fa-arrow-left"></i> Return to Homepage</a>
+            </div>
+        </div>
+    </div>
+
+    <script th:src="@{/js/main.js}"></script>
+    <script>
+        function fillDemo(email, pwd) {
+            const form = document.getElementById('loginForm');
+            const emailInput = document.getElementById('username');
+            const pwdInput = document.getElementById('password');
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            emailInput.value = email.trim().toLowerCase();
+            pwdInput.value = pwd;
+            emailInput.classList.add('pulse-field');
+            pwdInput.classList.add('pulse-field');
+
+            // Demo role buttons are true one-click login buttons.
+            // The CSRF token is rendered by Thymeleaf in the form, so the
+            // normal Spring Security login flow is preserved.
+            if (submitButton) {
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Opening portal...';
+            }
+
+            // Submit through the normal Spring Security authentication endpoint.
+            // No artificial delay is introduced.
+            if (typeof form.requestSubmit === 'function') {
+                form.requestSubmit();
+            } else {
+                form.submit();
+            }
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function () {
+            const emailInput = document.getElementById('username');
+            if (emailInput) {
+                emailInput.value = emailInput.value.trim().toLowerCase();
+            }
+        });
+
+        function togglePasswordVisibility(fieldId) {
+            const field = document.getElementById(fieldId);
+            const eye = document.getElementById(fieldId + '-eye');
+            if (field.type === 'password') {
+                field.type = 'text';
+                eye.classList.remove('fa-eye');
+                eye.classList.add('fa-eye-slash');
+            } else {
+                field.type = 'password';
+                eye.classList.remove('fa-eye-slash');
+                eye.classList.add('fa-eye');
+            }
+        }
+
+        // Auto-fill if demo parameter is present in URL
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const demo = params.get('demo');
+            if (demo === 'patient') fillDemo('patient@nutrihealth.com', 'Patient@123');
+            else if (demo === 'doctor') fillDemo('doctor@nutrihealth.com', 'Doctor@123');
+            else if (demo === 'nutritionist') fillDemo('nutritionist@nutrihealth.com', 'Nutritionist@123');
+            else if (demo === 'coordinator') fillDemo('coordinator@nutrihealth.com', 'Coordinator@123');
+            else if (demo === 'admin') fillDemo('admin@nutrihealth.com', 'Admin@123');
+            else if (demo === 'it') fillDemo('it@nutrihealth.com', 'IT@123');
+        });
+    </script>
+</body>
+</html>

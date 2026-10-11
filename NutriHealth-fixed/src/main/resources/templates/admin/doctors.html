@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Physicians Registry – Admin – NutriHealth</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" th:href="@{/css/dashboard.css}">
+    <link rel="stylesheet" th:href="@{/css/responsive.css}">
+    <link rel="stylesheet" th:href="@{/css/light-theme.css}">
+</head>
+<body class="app-body">
+    <header th:replace="~{fragments/header :: header}"></header>
+
+    <div class="app-layout">
+        <aside th:replace="~{fragments/sidebar :: sidebar('doctors')}"></aside>
+
+        <main class="app-main-content">
+            <div class="dashboard-page-header">
+                <div>
+                    <span class="page-category">Medical Staffing</span>
+                    <h1 class="page-title">Credentialed Physicians Directory</h1>
+                </div>
+            </div>
+
+            <div class="panel-card">
+                <div class="panel-card-header">
+                    <h3 class="panel-title"><i class="fas fa-user-md text-primary"></i> Clinic Medical Doctors</h3>
+                </div>
+                <div class="panel-card-body">
+                    <div class="table-responsive">
+                        <table class="app-table">
+                            <thead>
+                                <tr>
+                                    <th>Doctor Name</th>
+                                    <th>Email</th>
+                                    <th>Phone</th>
+                                    <th>Role Status</th>
+                                    <th>Affiliation</th>
+                                <th>Actions</th>
+</tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="d : ${doctors}">
+                                    <td><strong th:text="${d.fullName}">Dr. Robert Smith</strong></td>
+                                    <td th:text="${d.email}">doctor@nutrihealth.com</td>
+                                    <td th:text="${d.phone}">+1 (555) 019-2201</td>
+                                    <td><span class="badge badge-info">DOCTOR</span></td>
+                                    <td><span class="status-badge confirmed">ACTIVE STAFF</span></td>
+                                
+                                    <td>
+                                        <details><summary class="btn btn-secondary btn-xs">Edit / Delete</summary>
+                                            <form th:action="@{'/admin/users/' + ${d.id} + '/update'}" method="post" style="margin-top:8px; min-width:250px;"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+                                                <input name="fullName" class="form-control" th:value="${d.fullName}" required>
+                                                <input type="email" name="email" class="form-control" th:value="${d.email}" required>
+                                                <input name="phone" class="form-control" th:value="${d.phone}">
+                                                <input name="address" class="form-control" th:value="${d.address}">
+                                                <input name="gender" class="form-control" th:value="${d.gender}">
+                                                <input type="hidden" name="role" value="ROLE_DOCTOR">
+                                                <label><input type="checkbox" name="active" value="true" th:checked="${d.active}"> Active</label><br>
+                                                <button type="submit" class="btn btn-primary btn-xs">Save</button>
+                                            </form>
+                                            <form th:action="@{'/admin/users/' + ${d.id} + '/delete'}" method="post" style="margin-top:6px;" onsubmit="return confirm('Delete this user?');"><input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"><button type="submit" class="btn btn-danger btn-xs">Delete</button></form>
+                                        </details>
+                                    </td></tr>
+                                <tr th:if="${doctors == null or doctors.isEmpty()}">
+                                    <td colspan="6" class="text-center text-muted">No doctors found.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <footer th:replace="~{fragments/footer :: footer}"></footer>
+    <script th:src="@{/js/main.js}"></script>
+</body>
+</html>
